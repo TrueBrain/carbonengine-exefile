@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{5a4c4741-201d-465b-93df-2dc45605aefc}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;rc;def;r;odl;idl;hpj;bat</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{7352a5aa-0dd1-4d11-828f-fbfda7bf4b3e}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{ce63a352-0795-4977-84e2-7a70aea561a0}</UniqueIdentifier>
+      <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
+    </Filter>
+    <Filter Include="Output">
+      <UniqueIdentifier>{45b909f3-5594-44a7-a552-56a4960b60c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Output\win32">
+      <UniqueIdentifier>{29e6809a-744e-462c-a9ee-d43f9a784068}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Output\x64">
+      <UniqueIdentifier>{928e2a1c-d6ce-4181-8431-b90b065f8336}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ExeFile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StdAfx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ExeFile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StdAfx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="version.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="ExeFile.manifest">
+      <Filter>Resource Files</Filter>
+    </Manifest>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ExeFile.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\autobuild\exefile\win32\exefile.exe">
+      <Filter>Output\win32</Filter>
+    </None>
+    <None Include="..\..\autobuild\exefile\win32\ExeFile.pdb">
+      <Filter>Output\win32</Filter>
+    </None>
+    <None Include="..\..\autobuild\exefile\win32\exefile_d.exe">
+      <Filter>Output\win32</Filter>
+    </None>
+    <None Include="..\..\autobuild\exefile\win32\ExeFile_d.pdb">
+      <Filter>Output\win32</Filter>
+    </None>
+    <None Include="..\..\autobuild\exefile\x64\exefile.exe">
+      <Filter>Output\x64</Filter>
+    </None>
+    <None Include="..\..\autobuild\exefile\x64\ExeFile.pdb">
+      <Filter>Output\x64</Filter>
+    </None>
+    <None Include="..\..\autobuild\exefile\x64\exefile_d.exe">
+      <Filter>Output\x64</Filter>
+    </None>
+    <None Include="..\..\autobuild\exefile\x64\ExeFile_d.pdb">
+      <Filter>Output\x64</Filter>
+    </None>
+  </ItemGroup>
+</Project>
