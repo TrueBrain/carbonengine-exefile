@@ -1242,6 +1242,16 @@ void ExpandFileContents( const std::wstring& filename, std::vector<std::wstring>
 // can see if we have modified the destination for asserts at all.
 // This allows CCP_ASSERT to be silenced too.
 
+static int ReportHook_exit( int reportType, char *message, int *returnValue )
+{
+	if (reportType == _CRT_ASSERT) {
+		fprintf(stderr, "%s", message);
+		CCP_LOGERR( "%s", message);
+		BeOS->Terminate(1);
+	}
+	return FALSE;
+}
+
 static int ReportHook_crash( int reportType, char *message, int *returnValue )
 {
 	if (reportType == _CRT_ASSERT) {
@@ -1282,6 +1292,8 @@ void SilenceAssert(int level)
 		hook = ReportHook_abort;
 	} else if (level == 2) {
 		hook = ReportHook_crash;
+	} else if (level == 3) {
+		hook = ReportHook_exit;
 	} else {
 		return;
 	}
