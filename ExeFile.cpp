@@ -760,6 +760,8 @@ int APIENTRY WinMain_Guarded(HINSTANCE hInstance, HINSTANCE, LPSTR cmdline, int)
 
 	BePaths->LogPaths();
 
+	BlueInitializeResourceLoading();
+	
 	if (g_affinity!=-1)
 	{
 		int mask = g_affinity;
