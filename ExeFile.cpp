@@ -1285,22 +1285,55 @@ static int ReportHook_handle( int reportType, char *message, int *returnValue )
 	return FALSE;
 }
 
+CCPAssertResult CcpReportHookExit( int severity, const char* message )
+{
+	int returnValue = 0;
+	ReportHook_exit( _CRT_ASSERT, const_cast<char*>( message ), &returnValue );
+	return CCP_ASSERT_RESULT_NONE;
+}
+
+CCPAssertResult CcpReportHookCrash( int severity, const char* message )
+{
+	int returnValue = 0;
+	ReportHook_crash( _CRT_ASSERT, const_cast<char*>( message ), &returnValue );
+	return CCP_ASSERT_RESULT_NONE;
+}
+
+CCPAssertResult CcpReportHookAbort( int severity, const char* message )
+{
+	int returnValue = 0;
+	ReportHook_abort( _CRT_ASSERT, const_cast<char*>( message ), &returnValue );
+	return CCP_ASSERT_RESULT_NONE;
+}
+
+CCPAssertResult CcpReportHookHandle( int severity, const char* message )
+{
+	int returnValue = 0;
+	ReportHook_handle( _CRT_ASSERT, const_cast<char*>( message ), &returnValue );
+	return CCP_ASSERT_RESULT_NONE;
+}
+
 void SilenceAssert(int level)
 {
 	int (*hook)(int, char*, int*);
+	CcpAssertHook ccpHook;
 	if (level == 0) {
 		hook = ReportHook_handle;
+		ccpHook = CcpReportHookHandle;
 	} else if (level == 1) {
 		hook = ReportHook_abort;
+		ccpHook = CcpReportHookAbort;
 	} else if (level == 2) {
 		hook = ReportHook_crash;
+		ccpHook = CcpReportHookCrash;
 	} else if (level == 3) {
 		hook = ReportHook_exit;
+		ccpHook = CcpReportHookExit;
 	} else {
 		return;
 	}
 	_CrtSetReportHook2(_CRT_RPTHOOK_INSTALL, hook);
-	CcpAssertSetReportHook( hook );
+	CcpAssertSetReportHook( ccpHook );
 
 	// Set abort behaviour to REPORTFAULT only (disable the message which typcially
 	// is a dialogue box.
