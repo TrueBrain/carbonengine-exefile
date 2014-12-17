@@ -449,6 +449,13 @@ bool RedirectOutput(FILE *which, const wchar_t *pattern)
 	return false;
 }
 
+void __cdecl PureCallHandler()
+{
+	// Crash the process instead of showing the default MS "pure virtual call" dialog
+	volatile int* crashPointer = nullptr;
+	*crashPointer = 42;
+}
+
 #if BREAKPAD_ENABLED 
 
 bool BreakpadDumpCallback(const wchar_t* dump_path,
@@ -556,6 +563,8 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hi2, LPSTR cmdline, int arg)
 	oldHandler = _set_invalid_parameter_handler(myInvalidParameterHandler);
 #endif
 	int retcode = 0;
+
+	_set_purecall_handler( &PureCallHandler );
 
 #if BREAKPAD_ENABLED
 	{
