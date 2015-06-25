@@ -5,6 +5,7 @@
 #include <Logger/Logger.h>
 #include <CcpCore/include/CCPLog.h>
 
+#include <CcpCore/include/CcpCrash.h>
 
 #include <windows.h>
 #include <shellapi.h> // For ShellExecute
@@ -452,8 +453,7 @@ bool RedirectOutput(FILE *which, const wchar_t *pattern)
 void __cdecl PureCallHandler()
 {
 	// Crash the process instead of showing the default MS "pure virtual call" dialog
-	volatile int* crashPointer = nullptr;
-	*crashPointer = 42;
+	CcpCrashOnPurpose();
 }
 
 #if BREAKPAD_ENABLED 
@@ -1268,7 +1268,7 @@ static int ReportHook_crash( int reportType, char *message, int *returnValue )
 	if (reportType == _CRT_ASSERT) {
 		fprintf(stderr, "%s", message);
 		CCP_LOGERR( "%s", message);
-		*(int*)0 = 1; //cause segmentation failure
+		CcpCrashOnPurpose();
 		abort();
 	}
 	return FALSE;
