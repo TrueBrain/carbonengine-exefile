@@ -727,6 +727,8 @@ void PreStartupTest()
 
 int APIENTRY WinMain_Guarded(HINSTANCE hInstance, HINSTANCE, LPSTR cmdline, int)
 {
+	BlueInitializeSocketLogger();
+
 	g_instance = hInstance;
 	LogToLogfile(true, "");
 
