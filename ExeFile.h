@@ -1,30 +1,12 @@
-// For MiniDump support
-//#define __out_ecount(LEN) __out
-#include <dbghelp.h>
+#include "CommandArguments.h"
 
+void SilenceAssert( int level );
+void SetWorkingDirectory( const wchar_t* directory );
+void ShowConsoleWindow( ConsoleMode mode );
+void PreStartupTest();
+void SetProcessAffinity( int affinity );
+void LogToLogfile( bool startup, const char* reason );
+bool CreateDirectoryRec(const wchar_t *dir);
+int Main();
 
-class ExeFile
-{
-public:
-
-	ExeFile();
-	~ExeFile();
-
-	int Run();
-	
-	std::wstring GetFilename(const wchar_t* name, const wchar_t* ext);
-	DWORD mMainThreadId;
-
-	void ShowBlueErr();
-
-	static BOOL WINAPI OnConsoleCtrl(DWORD type);
-	
-	MINIDUMP_TYPE mDumpFlags;
-	bool mPopupOnErrors;
-	bool mHaveConsole;
-	
-	bool WriteMinidump(EXCEPTION_POINTERS *info);
-	bool CreateException();
-};
-
-int MinidumpFilter(int code, EXCEPTION_POINTERS *info);
+extern ICrashReporter* g_crashReporter;

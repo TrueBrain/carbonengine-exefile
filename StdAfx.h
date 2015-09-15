@@ -8,7 +8,7 @@
 // comment this out if you want python
 //#define NOPYTHON
 
-#if (_MSC_VER < 1400 && !_DLL)
+#if (defined(_WIN32) && _MSC_VER < 1400 && !_DLL)
 #define NOSTDEXCEPT
 #endif
 
@@ -21,7 +21,34 @@ using std::exception;
 #endif
 #endif
 
+#ifdef _WIN32
 #include <windows.h>
+#endif
 #include "BlueExposure/include/BlueExposure.h"
 #include <blue/include/Blue.h>
 #include <blue/include/IBlueOS.h>
+
+#ifdef __APPLE__
+#ifdef toupper
+#undef toupper
+#endif
+#ifdef tolower
+#undef tolower
+#endif
+#ifdef isalnum
+#undef isalnum
+#endif
+#ifdef isalpha
+#undef isalpha
+#endif
+#ifdef islower
+#undef islower
+#endif
+#ifdef isspace
+#undef isspace
+#endif
+#ifdef isupper
+#undef isupper
+#endif
+#endif
+

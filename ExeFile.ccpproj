@@ -1,0 +1,100 @@
+Imports:
+- ../core_project.yaml
+- ../blue/uses_blue.yaml
+- ../../../../../../sdk/GoogleBreakPad/2011-7-27/BreakPad.yaml
+
+General:
+  ConfigurationType: Application
+  UseOfMfc: false
+  IntDir: ../temp/$(ProjectName)/$(Platform)/$(Configuration)/$(PlatformToolset)/
+  OutDir: ../../autobuild/$(ProjectName)/$(Platform)/
+  TargetExt: .exe
+
+ClCompile:
+  PrecompiledHeader: Use
+  PrecompiledHeaderFile: StdAfx.h
+  PrecompiledHeaderOutputFile: $(IntDir)exefile.pch
+  WarningLevel: Level3
+  TreatWarningAsError: true
+  BufferSecurityCheck: true
+  PreprocessorDefinitions:
+  - CCPMATH_IMPLEMENT_D3DX_FUNCTIONS=1
+  - BLUEPROJECT
+  - CCP_MEMORY_REPLACE_OPERATOR_NEW=0
+
+Link:
+  GenerateDebugInformation: true
+  ProgramDatabaseFile: $(TargetDir)$(TargetName).pdb
+  GenerateManifest: false
+  LargeAddressAware: true
+
+vsPropertySheets:
+  - ../manifests.props
+
+Manifest:
+  AdditionalManifestFiles: 
+  - autoversion.manifest
+  - dpiaware.manifest
+
+PostBuildEvent:
+  Message: "Copy the exefile binaries to the correct location."
+  Command: "..\\..\\..\\..\\..\\..\\shared_tools\\python\\27\\python.exe exefile.py $(Platform) $(Configuration)"
+
+ResourceCompile:
+  Culture: "0x040f"
+  AdditionalIncludeDirectories:
+  - ..
+
+Configurations:
+  Debug|Win32,x64:
+    ClCompile:
+      PreprocessorDefinitions:
+      - _DEBUG
+      - WIN32
+      Optimization: Disabled
+      RuntimeLibrary: MultiThreadedDebugDLL
+    General: 
+      TargetName: exefile_d
+    ResourceCompile:
+      PreprocessorDefinitions:
+      - _DEBUG
+
+  Release|Win32,x64:
+    ClCompile:
+      PreprocessorDefinitions:
+      - NDEBUG
+      - BREAKPAD_ENABLED=1
+      - WIN32
+      Optimization: MaxSpeed
+      RuntimeLibrary: MultiThreadedDLL
+      DebugInformationFormat: ProgramDatabase
+      WholeProgramOptimization: true
+    Link:
+      LinkTimeCodeGeneration: UseLinkTimeCodeGeneration
+      AdditionalDependencies:
+      - exception_handler.lib
+      - breakpad_common.lib
+      - crash_generation_client.lib
+      - crash_report_sender.lib
+      - wininet.lib
+    General: 
+      TargetName: exefile
+    ResourceCompile:
+      PreprocessorDefinitions:
+      - NDEBUG
+
+  Release|Mac64:
+    ClCompile:
+      PreprocessorDefinitions:
+      - NDEBUG
+      Optimization: MaxSpeed
+      WholeProgramOptimization: true
+    General: 
+      TargetName: exefile
+    Link:
+      LinkTimeCodeGeneration: UseLinkTimeCodeGeneration
+      AppleRPath:
+      - "@loader_path"
+      - "@loader_path/../Libraries"
+      - "@loader_path/../Frameworks"
+
