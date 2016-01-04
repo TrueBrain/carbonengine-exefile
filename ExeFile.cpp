@@ -138,7 +138,7 @@ int Main()
 		SetProcessAffinity( g_commandArguments.affinity );
 	}
 
-	if( !BeOS->Startup( 13/*IBlueOSType.mVersion*/, g_commandArguments.pyOptimize ) )
+	if( !BeOS->Startup( g_commandArguments.pyOptimize, VERIFY_MANIFEST ) )
 	{
 		ShowBlueErr();
 		return -1;
