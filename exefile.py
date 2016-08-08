@@ -21,7 +21,7 @@ TIMESITE = r"http://timestamp.verisign.com/scripts/timstamp.dll"
 SIGNTOOL = r"..\..\..\..\..\..\shared_tools\utils\signtool\signtool.exe"
 SIGNCERT = r"..\..\..\..\..\..\shared_tools\utils\signtool\CodeSign.pfx"
 
-signaturepwd = os.getenv("signaturepwd")
+signaturepwd = os.getenv("CODESIGN_PWD")
 
 # --------------------------------------------------------------------------------
 def robocopy(project):
