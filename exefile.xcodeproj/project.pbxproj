@@ -21,7 +21,7 @@
 					"../../../carbon/src",
 					"../../../carbon/src/stackless/include",
 					"../../../carbon/src/stackless/stackless",
-					"../../../../../../sdk/telemetry/2.1A3/include",
+					"../../../../../../sdk/telemetry/3.0.1.1008/include",
 					"../../../../../../sdk/GoogleBreakpad/2011-7-27/src",
 					);
 				CLANG_WARN_INT_CONVERSION = YES;
@@ -46,7 +46,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"../../../carbon/bin/stackless/MacOsX$(ARCHS)",
 					"../../../carbon/autobuild/stackless/MacOsX$(ARCHS)",
-					"../../../../../../sdk/telemetry/2.1A3/lib",
+					"../../../../../../sdk/telemetry/3.0.1.1008/lib",
 					"../../../carbon/autobuild/blue/exefile/MacOsX$(ARCHS)/clang4.2/",
 					);
 				SYMROOT = "../../autobuild/exefile/MacOsX$(ARCHS)";
