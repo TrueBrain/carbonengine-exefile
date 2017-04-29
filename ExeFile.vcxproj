@@ -100,7 +100,7 @@
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PreprocessorDefinitions>NDEBUG;BREAKPAD_ENABLED=1;WIN32;CCP_STACKLESS=1;BLUE_WITH_PYTHON=1;CCPMATH_IMPLEMENT_D3DX_FUNCTIONS=1;BLUEPROJECT;CCP_MEMORY_REPLACE_OPERATOR_NEW=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\carbon\src\stackless\pc;.;$(CcpBranchPath)/carbon/src;..\..\..\carbon\src\stackless\include;..\..\..\carbon\src\stackless\stackless;$(CcpSdkPath)\telemetry\2.1A3\include;$(CcpSdkPath)/GoogleBreakpad/2011-7-27/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\carbon\src\stackless\pc;.;$(CcpBranchPath)/carbon/src;..\..\..\carbon\src\stackless\include;..\..\..\carbon\src\stackless\stackless;$(CcpSdkPath)\telemetry\3.0.1.1008\include;$(CcpSdkPath)/GoogleBreakpad/2011-7-27/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>True</MultiProcessorCompilation>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <WholeProgramOptimization>True</WholeProgramOptimization>
@@ -113,13 +113,13 @@
       <WarningLevel>Level3</WarningLevel>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>..\..\..\carbon\autobuild\stackless\$(Platform);$(CcpSdkPath)/GoogleBreakpad/2011-7-27/lib/vc100/$(Platform);..\..\..\carbon\autobuild\stackless\$(Platform);$(CcpSdkPath)\telemetry\2.1A3\lib;../../../carbon/autobuild/blue/exefile/$(Platform)/$(PlatformToolset)/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\carbon\autobuild\stackless\$(Platform);$(CcpSdkPath)/GoogleBreakpad/2011-7-27/lib/vc100/$(Platform);..\..\..\carbon\autobuild\stackless\$(Platform);$(CcpSdkPath)\telemetry\3.0.1.1008\lib;../../../carbon/autobuild/blue/exefile/$(Platform)/$(PlatformToolset)/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>True</GenerateDebugInformation>
       <LargeAddressAware>True</LargeAddressAware>
       <ProgramDatabaseFile>$(TargetDir)$(TargetName).pdb</ProgramDatabaseFile>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
       <GenerateManifest>False</GenerateManifest>
-      <AdditionalDependencies>exception_handler.lib;breakpad_common.lib;crash_generation_client.lib;crash_report_sender.lib;wininet.lib;blue.lib;python27.lib;telemetry64.link.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>exception_handler.lib;breakpad_common.lib;crash_generation_client.lib;crash_report_sender.lib;wininet.lib;blue.lib;python27.lib;rad_tm_win64.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ResourceCompile>
       <Culture>0x040f</Culture>
@@ -140,7 +140,7 @@
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PreprocessorDefinitions>_DEBUG;WIN32;CCP_STACKLESS=1;BLUE_WITH_PYTHON=1;CCPMATH_IMPLEMENT_D3DX_FUNCTIONS=1;BLUEPROJECT;CCP_MEMORY_REPLACE_OPERATOR_NEW=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\carbon\src\stackless\pc;.;$(CcpBranchPath)/carbon/src;..\..\..\carbon\src\stackless\include;..\..\..\carbon\src\stackless\stackless;$(CcpSdkPath)\telemetry\2.1A3\include;$(CcpSdkPath)/GoogleBreakpad/2011-7-27/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\carbon\src\stackless\pc;.;$(CcpBranchPath)/carbon/src;..\..\..\carbon\src\stackless\include;..\..\..\carbon\src\stackless\stackless;$(CcpSdkPath)\telemetry\3.0.1.1008\include;$(CcpSdkPath)/GoogleBreakpad/2011-7-27/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>True</MultiProcessorCompilation>
       <TreatWarningAsError>True</TreatWarningAsError>
       <PrecompiledHeaderOutputFile>$(IntDir)exefile.pch</PrecompiledHeaderOutputFile>
@@ -151,12 +151,12 @@
       <WarningLevel>Level3</WarningLevel>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>..\..\..\carbon\autobuild\stackless\$(Platform);..\..\..\carbon\autobuild\stackless\$(Platform);$(CcpSdkPath)\telemetry\2.1A3\lib;../../../carbon/autobuild/blue/exefile/$(Platform)/$(PlatformToolset)/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\carbon\autobuild\stackless\$(Platform);..\..\..\carbon\autobuild\stackless\$(Platform);$(CcpSdkPath)\telemetry\3.0.1.1008\lib;../../../carbon/autobuild/blue/exefile/$(Platform)/$(PlatformToolset)/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>True</GenerateDebugInformation>
       <LargeAddressAware>True</LargeAddressAware>
       <ProgramDatabaseFile>$(TargetDir)$(TargetName).pdb</ProgramDatabaseFile>
       <GenerateManifest>False</GenerateManifest>
-      <AdditionalDependencies>blue_d.lib;python27_d.lib;telemetry32.link.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>blue_d.lib;python27_d.lib;rad_tm_win32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ResourceCompile>
       <Culture>0x040f</Culture>
@@ -177,7 +177,7 @@
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PreprocessorDefinitions>_DEBUG;WIN32;CCP_STACKLESS=1;BLUE_WITH_PYTHON=1;CCPMATH_IMPLEMENT_D3DX_FUNCTIONS=1;BLUEPROJECT;CCP_MEMORY_REPLACE_OPERATOR_NEW=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\carbon\src\stackless\pc;.;$(CcpBranchPath)/carbon/src;..\..\..\carbon\src\stackless\include;..\..\..\carbon\src\stackless\stackless;$(CcpSdkPath)\telemetry\2.1A3\include;$(CcpSdkPath)/GoogleBreakpad/2011-7-27/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\carbon\src\stackless\pc;.;$(CcpBranchPath)/carbon/src;..\..\..\carbon\src\stackless\include;..\..\..\carbon\src\stackless\stackless;$(CcpSdkPath)\telemetry\3.0.1.1008\include;$(CcpSdkPath)/GoogleBreakpad/2011-7-27/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>True</MultiProcessorCompilation>
       <TreatWarningAsError>True</TreatWarningAsError>
       <PrecompiledHeaderOutputFile>$(IntDir)exefile.pch</PrecompiledHeaderOutputFile>
@@ -188,12 +188,12 @@
       <WarningLevel>Level3</WarningLevel>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>..\..\..\carbon\autobuild\stackless\$(Platform);..\..\..\carbon\autobuild\stackless\$(Platform);$(CcpSdkPath)\telemetry\2.1A3\lib;../../../carbon/autobuild/blue/exefile/$(Platform)/$(PlatformToolset)/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\carbon\autobuild\stackless\$(Platform);..\..\..\carbon\autobuild\stackless\$(Platform);$(CcpSdkPath)\telemetry\3.0.1.1008\lib;../../../carbon/autobuild/blue/exefile/$(Platform)/$(PlatformToolset)/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>True</GenerateDebugInformation>
       <LargeAddressAware>True</LargeAddressAware>
       <ProgramDatabaseFile>$(TargetDir)$(TargetName).pdb</ProgramDatabaseFile>
       <GenerateManifest>False</GenerateManifest>
-      <AdditionalDependencies>blue_d.lib;python27_d.lib;telemetry64.link.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>blue_d.lib;python27_d.lib;rad_tm_win64.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ResourceCompile>
       <Culture>0x040f</Culture>
@@ -214,7 +214,7 @@
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PreprocessorDefinitions>NDEBUG;BREAKPAD_ENABLED=1;WIN32;CCP_STACKLESS=1;BLUE_WITH_PYTHON=1;CCPMATH_IMPLEMENT_D3DX_FUNCTIONS=1;BLUEPROJECT;CCP_MEMORY_REPLACE_OPERATOR_NEW=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\carbon\src\stackless\pc;.;$(CcpBranchPath)/carbon/src;..\..\..\carbon\src\stackless\include;..\..\..\carbon\src\stackless\stackless;$(CcpSdkPath)\telemetry\2.1A3\include;$(CcpSdkPath)/GoogleBreakpad/2011-7-27/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\carbon\src\stackless\pc;.;$(CcpBranchPath)/carbon/src;..\..\..\carbon\src\stackless\include;..\..\..\carbon\src\stackless\stackless;$(CcpSdkPath)\telemetry\3.0.1.1008\include;$(CcpSdkPath)/GoogleBreakpad/2011-7-27/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>True</MultiProcessorCompilation>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <WholeProgramOptimization>True</WholeProgramOptimization>
@@ -227,13 +227,13 @@
       <WarningLevel>Level3</WarningLevel>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>..\..\..\carbon\autobuild\stackless\$(Platform);$(CcpSdkPath)/GoogleBreakpad/2011-7-27/lib/vc100/$(Platform);..\..\..\carbon\autobuild\stackless\$(Platform);$(CcpSdkPath)\telemetry\2.1A3\lib;../../../carbon/autobuild/blue/exefile/$(Platform)/$(PlatformToolset)/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\carbon\autobuild\stackless\$(Platform);$(CcpSdkPath)/GoogleBreakpad/2011-7-27/lib/vc100/$(Platform);..\..\..\carbon\autobuild\stackless\$(Platform);$(CcpSdkPath)\telemetry\3.0.1.1008\lib;../../../carbon/autobuild/blue/exefile/$(Platform)/$(PlatformToolset)/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>True</GenerateDebugInformation>
       <LargeAddressAware>True</LargeAddressAware>
       <ProgramDatabaseFile>$(TargetDir)$(TargetName).pdb</ProgramDatabaseFile>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
       <GenerateManifest>False</GenerateManifest>
-      <AdditionalDependencies>exception_handler.lib;breakpad_common.lib;crash_generation_client.lib;crash_report_sender.lib;wininet.lib;blue.lib;python27.lib;telemetry32.link.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>exception_handler.lib;breakpad_common.lib;crash_generation_client.lib;crash_report_sender.lib;wininet.lib;blue.lib;python27.lib;rad_tm_win32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ResourceCompile>
       <Culture>0x040f</Culture>
