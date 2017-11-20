@@ -24,6 +24,7 @@ void Usage()
 	fprintf(stderr, "       /stderr=<path with %%p as pid>\n");
 	fprintf(stderr, "       /stdout=<path with %%p as pid>\n");
 	fprintf(stderr, "       /noBreakpadUpload\n");
+	fprintf(stderr, "       /service\n");
 	fprintf(stderr, "       paths can start with $(cwd)\n");
 	exit( 0 );
 }
@@ -383,7 +384,10 @@ void ParseCommandLine( const CommandLine& commandLine, CommandArguments& command
 			commandArguments.assertLevel = _wtoi(arg.substr(8).c_str());
 		} else if( larg.find( L"/cwd=") == 0 ) {
 			commandArguments.workingDirectory = arg.substr(5);
+		} else if (larg == L"/service") {
+			commandArguments.asService = true;
 		}
+
 	}
 	
 	if( verbose )
@@ -396,5 +400,6 @@ void ParseCommandLine( const CommandLine& commandLine, CommandArguments& command
 		fprintf(stdout, "/console_mode %d\n", commandArguments.consoleMode);
 		fprintf(stdout, "/aflock=%d\n", commandArguments.affinity);
 		fprintf(stdout, "/pyoptimize=%d\n", commandArguments.pyOptimize);
+		fprintf(stdout, "/service=%S\n", commandArguments.asService ? "yes" : "no");
 	}
 }

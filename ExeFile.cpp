@@ -24,7 +24,11 @@ CommandArguments g_commandArguments;
 
 const char* g_moduleName = "ExeFile";
 
-
+#ifdef _WIN32
+#include <signal.h>
+#include <pythread.h>
+#include <windows.h>
+#endif
 
 void ShowBlueErr()
 {
@@ -86,6 +90,139 @@ void RedirectOutput( FILE* which, const wchar_t* pattern )
     }
 }
 
+#ifdef _WIN32
+
+SERVICE_STATUS        g_ServiceStatus = { 0 };
+SERVICE_STATUS_HANDLE g_StatusHandle = NULL;
+HANDLE                g_ServiceStopEvent = INVALID_HANDLE_VALUE;
+
+VOID WINAPI ServiceCtrlHandler(DWORD CtrlCode)
+{
+	switch (CtrlCode)
+	{
+	case SERVICE_CONTROL_STOP:
+
+		if (g_ServiceStatus.dwCurrentState != SERVICE_RUNNING)
+			break;
+
+		g_ServiceStatus.dwControlsAccepted = 0;
+		g_ServiceStatus.dwCurrentState = SERVICE_STOP_PENDING;
+		g_ServiceStatus.dwWin32ExitCode = 0;
+		g_ServiceStatus.dwCheckPoint = 4;
+
+		if (SetServiceStatus(g_StatusHandle, &g_ServiceStatus) == FALSE)
+		{
+			OutputDebugString(_T(
+				"Eve Node Service: ServiceCtrlHandler: SetServiceStatus returned error"));
+		}
+
+		raise(SIGINT); // Signal the main-thread by sending an interrupt to the process.
+					   // I HOPE that the stackless system catches this SIGINT and properly shuts down the process
+
+		break;
+
+	default:
+		break;
+	}
+}
+
+bool ServiceSetup()
+{
+	g_ServiceStopEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+	if (g_ServiceStopEvent == NULL)
+	{
+		g_ServiceStatus.dwControlsAccepted = 0;
+		g_ServiceStatus.dwCurrentState = SERVICE_STOPPED;
+		g_ServiceStatus.dwWin32ExitCode = GetLastError();
+		g_ServiceStatus.dwCheckPoint = 1;
+
+		if (SetServiceStatus(g_StatusHandle, &g_ServiceStatus) == FALSE)
+		{
+			OutputDebugString(_T(
+				"Eve Node Service: ServiceMain: SetServiceStatus returned error"));
+		}
+		return FALSE;
+	}
+	ResetEvent(g_ServiceStopEvent);
+
+	g_StatusHandle = RegisterServiceCtrlHandler("", ServiceCtrlHandler);
+	if (g_StatusHandle == NULL)
+	{
+		return FALSE;
+	}
+
+	ZeroMemory(&g_ServiceStatus, sizeof(g_ServiceStatus));
+	g_ServiceStatus.dwServiceType = SERVICE_WIN32_OWN_PROCESS;
+	g_ServiceStatus.dwControlsAccepted = 0;
+	g_ServiceStatus.dwCurrentState = SERVICE_START_PENDING;
+	g_ServiceStatus.dwWin32ExitCode = 0;
+	g_ServiceStatus.dwServiceSpecificExitCode = 0;
+	g_ServiceStatus.dwCheckPoint = 0;
+
+	if (SetServiceStatus(g_StatusHandle, &g_ServiceStatus) == FALSE)
+	{
+		OutputDebugString(_T(
+			"Eve Node Service: ServiceMain: SetServiceStatus returned error"));
+	}
+
+	return TRUE;
+}
+
+void ServiceStart()
+{
+	g_ServiceStatus.dwControlsAccepted = SERVICE_ACCEPT_STOP;
+	g_ServiceStatus.dwCurrentState = SERVICE_RUNNING;
+	g_ServiceStatus.dwWin32ExitCode = 0;
+	g_ServiceStatus.dwCheckPoint = 0;
+
+	if (SetServiceStatus(g_StatusHandle, &g_ServiceStatus) == FALSE)
+	{
+		OutputDebugString(_T(
+			"Eve Node Service: ServiceMain: SetServiceStatus returned error"));
+	}
+}
+
+void ServiceStop()
+{
+	g_ServiceStatus.dwControlsAccepted = 0;
+	g_ServiceStatus.dwCurrentState = SERVICE_STOPPED;
+	g_ServiceStatus.dwWin32ExitCode = 0;
+	g_ServiceStatus.dwCheckPoint = 3;
+
+	if (SetServiceStatus(g_StatusHandle, &g_ServiceStatus) == FALSE)
+	{
+		OutputDebugString(_T(
+			"Eve Node Service: ServiceMain: SetServiceStatus returned error"));
+	}
+}
+
+VOID WINAPI ServiceMain(DWORD argc, LPTSTR *argv)
+{
+	ServiceSetup();
+	ServiceStart();
+	WaitForSingleObject(g_ServiceStopEvent, INFINITE);
+	ServiceStop();
+	CloseHandle(g_ServiceStopEvent);
+}
+
+DWORD WINAPI ServiceEntrypoint(LPVOID lpParam)
+{
+
+	SERVICE_TABLE_ENTRY ServiceTable[] =
+	{
+		{ "", (LPSERVICE_MAIN_FUNCTION)ServiceMain }
+	};
+
+	if (StartServiceCtrlDispatcher(ServiceTable) == FALSE)
+	{
+		return GetLastError();
+	}
+
+	return 0;
+}
+
+#endif
+
 
 int Main()
 {
@@ -99,6 +236,20 @@ int Main()
 
 	//where are we running?
 	ParseCommandLine( commandLine, g_commandArguments );
+
+#ifdef _WIN32
+	HANDLE sdcHandle = 0;
+	if (g_commandArguments.asService == true)
+	{
+		sdcHandle = CreateThread(NULL, 0, ServiceEntrypoint, NULL, 0, NULL);
+		if (sdcHandle == NULL)
+		{
+			CCP_LOGERR("Failed to set up windows service ctrl.");
+			return 0;
+		}
+	}
+#endif
+
 	if( g_commandArguments.assertLevel >= 0 )
 	{
 		SilenceAssert( g_commandArguments.assertLevel );
@@ -143,7 +294,7 @@ int Main()
 		ShowBlueErr();
 		return -1;
 	}
-
+	
 	// Now, enter stackless and continue running from there.  This allows stackless to initialize
 	// the main tasklet.
 	if( !BeOS->RunStackless() )
@@ -151,6 +302,13 @@ int Main()
 		ShowBlueErr();
 	}
 
+#ifdef _WIN32
+	CCP_LOGNOTICE("Windows Service Stop Event Triggered");
+	SetEvent(g_ServiceStopEvent);
+	WaitForSingleObject(sdcHandle, 5000);
+	CloseHandle(sdcHandle);
+#endif
+	
 	// Normally the RunStackless function will terminate the app before even 
 	// reaching here.  But just in case that doesn't happen we call Terminate,
 	// it's the only way to be sure :)
@@ -159,3 +317,4 @@ int Main()
 	// Stop the compiler from complaining - we won't get here
 	return 0;
 }
+

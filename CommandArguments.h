@@ -21,6 +21,7 @@ struct CommandArguments
 	std::wstring redirectStdOut;
 	int assertLevel;
 	std::wstring workingDirectory;
+	bool asService;
 
 	CommandArguments()
 		:consoleMode( console_mode_create ),
@@ -31,7 +32,8 @@ struct CommandArguments
 #else
 		pyOptimize( 1 ),
 #endif
-		assertLevel( -1 )
+		assertLevel( -1 ),
+		asService( false )
 	{
 	}
 };
