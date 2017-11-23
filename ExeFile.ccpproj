@@ -29,7 +29,7 @@ Link:
   LargeAddressAware: true
 
 vsPropertySheets:
-  - ../manifests/manifests.props
+  - ../manifests/non_ccpproj_manifests.props
 
 Manifest:
   AdditionalManifestFiles: 

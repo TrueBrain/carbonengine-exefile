@@ -79,16 +79,16 @@
   </ItemGroup>
   <ImportGroup Label="ExtensionSettings"/>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
-    <Import Project="../manifests/manifests.props"/>
+    <Import Project="../manifests/non_ccpproj_manifests.props"/>
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
-    <Import Project="../manifests/manifests.props"/>
+    <Import Project="../manifests/non_ccpproj_manifests.props"/>
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
-    <Import Project="../manifests/manifests.props"/>
+    <Import Project="../manifests/non_ccpproj_manifests.props"/>
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
-    <Import Project="../manifests/manifests.props"/>
+    <Import Project="../manifests/non_ccpproj_manifests.props"/>
   </ImportGroup>
   <PropertyGroup>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">exefile</TargetName>
