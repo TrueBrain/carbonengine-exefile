@@ -131,10 +131,7 @@
     </Manifest>
     <PreBuildEvent/>
     <PreLinkEvent/>
-    <PostBuildEvent>
-      <Message>Copy the exefile binaries to the correct location.</Message>
-      <Command>..\..\..\..\..\..\shared_tools\python\27\python.exe exefile.py $(Platform) $(Configuration)</Command>
-    </PostBuildEvent>
+    <PostBuildEvent/>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -168,10 +165,7 @@
     </Manifest>
     <PreBuildEvent/>
     <PreLinkEvent/>
-    <PostBuildEvent>
-      <Message>Copy the exefile binaries to the correct location.</Message>
-      <Command>..\..\..\..\..\..\shared_tools\python\27\python.exe exefile.py $(Platform) $(Configuration)</Command>
-    </PostBuildEvent>
+    <PostBuildEvent/>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -205,10 +199,7 @@
     </Manifest>
     <PreBuildEvent/>
     <PreLinkEvent/>
-    <PostBuildEvent>
-      <Message>Copy the exefile binaries to the correct location.</Message>
-      <Command>..\..\..\..\..\..\shared_tools\python\27\python.exe exefile.py $(Platform) $(Configuration)</Command>
-    </PostBuildEvent>
+    <PostBuildEvent/>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -245,10 +236,7 @@
     </Manifest>
     <PreBuildEvent/>
     <PreLinkEvent/>
-    <PostBuildEvent>
-      <Message>Copy the exefile binaries to the correct location.</Message>
-      <Command>..\..\..\..\..\..\shared_tools\python\27\python.exe exefile.py $(Platform) $(Configuration)</Command>
-    </PostBuildEvent>
+    <PostBuildEvent/>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="autoversion.h"/>

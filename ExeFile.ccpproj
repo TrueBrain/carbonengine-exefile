@@ -36,10 +36,6 @@ Manifest:
   - autoversion.manifest
   - dpiaware.manifest
 
-PostBuildEvent:
-  Message: "Copy the exefile binaries to the correct location."
-  Command: "..\\..\\..\\..\\..\\..\\shared_tools\\python\\27\\python.exe exefile.py $(Platform) $(Configuration)"
-
 ResourceCompile:
   Culture: "0x040f"
   AdditionalIncludeDirectories:
