@@ -1,6 +1,6 @@
 Imports:
 - ../core_project/core_project.yaml
-- ../blue/uses_blue.yaml
+- ../blue/Include/uses_blue.yaml
 - ../../../../../../sdk/GoogleBreakPad/2011-7-27/BreakPad.yaml
 
 General:
