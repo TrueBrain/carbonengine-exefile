@@ -400,6 +400,6 @@ void ParseCommandLine( const CommandLine& commandLine, CommandArguments& command
 		fprintf(stdout, "/console_mode %d\n", commandArguments.consoleMode);
 		fprintf(stdout, "/aflock=%d\n", commandArguments.affinity);
 		fprintf(stdout, "/pyoptimize=%d\n", commandArguments.pyOptimize);
-		fprintf(stdout, "/service=%S\n", commandArguments.asService ? "yes" : "no");
+		fprintf(stdout, "/service=%s\n", commandArguments.asService ? "yes" : "no");
 	}
 }
