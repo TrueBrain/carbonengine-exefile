@@ -99,7 +99,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PreprocessorDefinitions>BREAKPAD_ENABLED=1;NDEBUG;WIN32;BLUEPROJECT;BLUE_WITH_PYTHON=1;CCPMATH_IMPLEMENT_D3DX_FUNCTIONS=1;CCP_MEMORY_REPLACE_OPERATOR_NEW=0;CCP_STACKLESS=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>BREAKPAD_ENABLED=1;NDEBUG;WIN32;BLUEPROJECT;BLUE_WITH_PYTHON=1;CCP_MEMORY_REPLACE_OPERATOR_NEW=0;CCP_STACKLESS=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\..\carbon\src\stackless\pc;$(CcpBranchPath)/carbon/src;$(CcpSdkPath)/GoogleBreakpad/2011-7-27/src;$(CcpSdkPath)\telemetry\3.0.1.1008\include;.;..\..\..\carbon\src\stackless\include;..\..\..\carbon\src\stackless\stackless;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>True</MultiProcessorCompilation>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -136,7 +136,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PreprocessorDefinitions>WIN32;_DEBUG;BLUEPROJECT;BLUE_WITH_PYTHON=1;CCPMATH_IMPLEMENT_D3DX_FUNCTIONS=1;CCP_MEMORY_REPLACE_OPERATOR_NEW=0;CCP_STACKLESS=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;BLUEPROJECT;BLUE_WITH_PYTHON=1;CCP_MEMORY_REPLACE_OPERATOR_NEW=0;CCP_STACKLESS=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\..\carbon\src\stackless\pc;$(CcpBranchPath)/carbon/src;$(CcpSdkPath)/GoogleBreakpad/2011-7-27/src;$(CcpSdkPath)\telemetry\3.0.1.1008\include;.;..\..\..\carbon\src\stackless\include;..\..\..\carbon\src\stackless\stackless;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>True</MultiProcessorCompilation>
       <TreatWarningAsError>True</TreatWarningAsError>
@@ -170,7 +170,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PreprocessorDefinitions>WIN32;_DEBUG;BLUEPROJECT;BLUE_WITH_PYTHON=1;CCPMATH_IMPLEMENT_D3DX_FUNCTIONS=1;CCP_MEMORY_REPLACE_OPERATOR_NEW=0;CCP_STACKLESS=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;BLUEPROJECT;BLUE_WITH_PYTHON=1;CCP_MEMORY_REPLACE_OPERATOR_NEW=0;CCP_STACKLESS=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\..\carbon\src\stackless\pc;$(CcpBranchPath)/carbon/src;$(CcpSdkPath)/GoogleBreakpad/2011-7-27/src;$(CcpSdkPath)\telemetry\3.0.1.1008\include;.;..\..\..\carbon\src\stackless\include;..\..\..\carbon\src\stackless\stackless;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>True</MultiProcessorCompilation>
       <TreatWarningAsError>True</TreatWarningAsError>
@@ -204,7 +204,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PreprocessorDefinitions>BREAKPAD_ENABLED=1;NDEBUG;WIN32;BLUEPROJECT;BLUE_WITH_PYTHON=1;CCPMATH_IMPLEMENT_D3DX_FUNCTIONS=1;CCP_MEMORY_REPLACE_OPERATOR_NEW=0;CCP_STACKLESS=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>BREAKPAD_ENABLED=1;NDEBUG;WIN32;BLUEPROJECT;BLUE_WITH_PYTHON=1;CCP_MEMORY_REPLACE_OPERATOR_NEW=0;CCP_STACKLESS=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\..\carbon\src\stackless\pc;$(CcpBranchPath)/carbon/src;$(CcpSdkPath)/GoogleBreakpad/2011-7-27/src;$(CcpSdkPath)\telemetry\3.0.1.1008\include;.;..\..\..\carbon\src\stackless\include;..\..\..\carbon\src\stackless\stackless;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>True</MultiProcessorCompilation>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
