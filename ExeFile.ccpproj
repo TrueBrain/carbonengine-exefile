@@ -18,7 +18,6 @@ ClCompile:
   TreatWarningAsError: true
   BufferSecurityCheck: true
   PreprocessorDefinitions:
-  - CCPMATH_IMPLEMENT_D3DX_FUNCTIONS=1
   - BLUEPROJECT
   - CCP_MEMORY_REPLACE_OPERATOR_NEW=0
 
