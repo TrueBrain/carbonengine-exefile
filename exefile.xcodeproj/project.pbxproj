@@ -4,25 +4,65 @@
 	classes = {
 		};
 	objects = {
-		0000001000008fa5b5180995 = {
-			name = ExeFile.h;
+		000000130000e63e358652d5 = {
+			isa = PBXBuildFile;
+			fileRef = 000000140000e63e358652d5;
+			};
+		0000000C0000e63e358652d5 = {
+			name = autoversion.h;
 			fileEncoding = 4;
 			lastKnownFileType = sourcecode.cpp.h;
-			path = ExeFile.h;
+			path = autoversion.h;
 			isa = PBXFileReference;
 			sourceTree = "<group>";
 			};
-		0000002500008fa5b5180995 = {
+		000000010000e63e358652d5 = {
+			isa = PBXBuildFile;
+			fileRef = 000000020000e63e358652d5;
+			};
+		000000080000e63e358652d5 = {
+			name = StdAfx.cpp;
+			fileEncoding = 4;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = StdAfx.cpp;
+			isa = PBXFileReference;
+			sourceTree = "<group>";
+			};
+		0000000E0000e63e358652d5 = {
+			name = CommandArguments.h;
+			fileEncoding = 4;
+			lastKnownFileType = sourcecode.cpp.h;
+			path = CommandArguments.h;
+			isa = PBXFileReference;
+			sourceTree = "<group>";
+			};
+		000000200000e63e358652d5 = {
+			dependencies = (
+				);
+			productReference = 0000001D0000e63e358652d5;
+			name = Release_Mac64;
+			productType = "com.apple.product-type.tool";
+			buildRules = (
+				);
+			isa = PBXNativeTarget;
+			productName = ExeFile;
+			buildConfigurationList = 000000210000e63e358652d5;
+			buildPhases = (
+				0000001F0000e63e358652d5,
+				000000220000e63e358652d5,
+				);
+			};
+		000000250000e63e358652d5 = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				HEADER_SEARCH_PATHS = (
 					"../../../carbon/src/stackless/Mac",
-					.,
-					"../../../carbon/src",
 					"../../../carbon/src/stackless/include",
+					"../../../carbon/src",
+					"../../../../../../sdk/GoogleBreakpad/2011-7-27/src",
+					.,
 					"../../../carbon/src/stackless/stackless",
 					"../../../../../../sdk/telemetry/3.0.1.1008/include",
-					"../../../../../../sdk/GoogleBreakpad/2011-7-27/src",
 					);
 				CLANG_WARN_INT_CONVERSION = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -35,7 +75,7 @@
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/";
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				GCC_OPTIMIZATION_LEVEL = s;
 				ONLY_ACTIVE_ARCH = YES;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
@@ -45,52 +85,44 @@
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				LIBRARY_SEARCH_PATHS = (
 					"../../../carbon/bin/stackless/MacOsX$(ARCHS)",
-					"../../../carbon/autobuild/stackless/MacOsX$(ARCHS)",
 					"../../../../../../sdk/telemetry/3.0.1.1008/lib",
 					"../../../carbon/autobuild/blue/exefile/MacOsX$(ARCHS)/clang4.2/",
+					"../../../carbon/autobuild/stackless/MacOsX$(ARCHS)",
 					);
-				SYMROOT = "../../autobuild/exefile/MacOsX$(ARCHS)";
-				OBJROOT = "../temp/exefile/MacOsX$(ARCHS)/$(CONFIGURATION)/clang4.2";
+				SYMROOT = "../../autobuild/ExeFile/MacOsX$(ARCHS)";
+				OBJROOT = "../temp/ExeFile/MacOsX$(ARCHS)/$(CONFIGURATION)/clang4.2";
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				CONFIGURATION_TEMP_DIR = "../temp/exefile/MacOsX$(ARCHS)/$(CONFIGURATION)/clang4.2";
+				CONFIGURATION_TEMP_DIR = "../temp/ExeFile/MacOsX$(ARCHS)/$(CONFIGURATION)/clang4.2";
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					NDEBUG,
-					"PyMODINIT_FUNC=\"__attribute((visibility(\\\"default\\\"))) extern \\\"C\\\" void\"",
-					"CCP_STACKLESS=1",
-					"BLUE_WITH_PYTHON=1",
-					"CCPMATH_IMPLEMENT_D3DX_FUNCTIONS=1",
 					BLUEPROJECT,
 					"CCP_MEMORY_REPLACE_OPERATOR_NEW=0",
+					"CCP_STACKLESS=1",
+					NDEBUG,
+					"PyMODINIT_FUNC=\"__attribute((visibility(\\\"default\\\"))) extern \\\"C\\\" void\"",
+					"BLUE_WITH_PYTHON=1",
 					"$(inherited)",
 					);
 				COPY_PHASE_STRIP = NO;
 				CLANG_CXX_LIBRARY = "libc++";
 				GCC_PREFIX_HEADER = StdAfx.h;
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path @loader_path/../Libraries @loader_path/../Frameworks";
 				SDKROOT = macosx;
-				ALWAYS_SEARCH_USER_PATHS = NO;
+				WARNING_CFLAGS = "-Wno-nonportable-include-path -Wno-inconsistent-missing-override";
 				};
 			name = Release;
 			};
-		0000000500008fa5b5180995 = {
-			isa = PBXBuildFile;
-			fileRef = 0000000600008fa5b5180995;
+		000000100000e63e358652d5 = {
+			name = ExeFile.h;
+			fileEncoding = 4;
+			lastKnownFileType = sourcecode.cpp.h;
+			path = ExeFile.h;
+			isa = PBXFileReference;
+			sourceTree = "<group>";
 			};
-		0000001700008fa5b5180995 = {
-			isa = PBXBuildFile;
-			fileRef = 0000001800008fa5b5180995;
-			};
-		0000002100008fa5b5180995 = {
-			isa = XCConfigurationList;
-			defaultConfigurationName = Release;
-			buildConfigurations = (
-				0000002500008fa5b5180995,
-				);
-			defaultConfigurationIsVisible = 0;
-			};
-		0000001A00008fa5b5180995 = {
+		0000001A0000e63e358652d5 = {
 			name = blue.so;
 			fileEncoding = 4;
 			lastKnownFileType = "compiled.mach-o.dylib";
@@ -98,200 +130,47 @@
 			isa = PBXFileReference;
 			sourceTree = "<group>";
 			};
-		0000001E00008fa5b5180995 = {
+		0000001E0000e63e358652d5 = {
 			isa = PBXGroup;
 			children = (
-				0000001B00008fa5b5180995,
-				0000001C00008fa5b5180995,
+				0000001B0000e63e358652d5,
+				0000001C0000e63e358652d5,
 				);
 			sourceTree = "<group>";
 			};
-		0000001200008fa5b5180995 = {
-			name = resource.h;
-			fileEncoding = 4;
-			lastKnownFileType = sourcecode.cpp.h;
-			path = resource.h;
-			isa = PBXFileReference;
+		000000050000e63e358652d5 = {
+			isa = PBXBuildFile;
+			fileRef = 000000060000e63e358652d5;
+			};
+		0000000D0000e63e358652d5 = {
+			isa = PBXBuildFile;
+			fileRef = 0000000E0000e63e358652d5;
+			};
+		000000110000e63e358652d5 = {
+			isa = PBXBuildFile;
+			fileRef = 000000120000e63e358652d5;
+			};
+		000000150000e63e358652d5 = {
+			isa = PBXBuildFile;
+			fileRef = 000000160000e63e358652d5;
+			};
+		000000190000e63e358652d5 = {
+			isa = PBXBuildFile;
+			fileRef = 0000001A0000e63e358652d5;
+			};
+		0000001C0000e63e358652d5 = {
+			isa = PBXGroup;
 			sourceTree = "<group>";
-			};
-		0000002600008fa5b5180995 = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				};
-			name = Release;
-			};
-		0000002200008fa5b5180995 = {
-			files = (
-				0000001700008fa5b5180995,
-				0000001900008fa5b5180995,
+			children = (
+				000000180000e63e358652d5,
+				0000001A0000e63e358652d5,
 				);
-			buildActionMask = 2147483647;
-			isa = PBXFrameworksBuildPhase;
-			runOnlyForDeploymentPostprocessing = 0;
+			name = Dependencies;
 			};
-		0000001D00008fa5b5180995 = {
-			path = exefile.exe;
-			isa = PBXFileReference;
-			includeInIndex = 0;
-			explicitFileType = "compiled.mach-o.executable";
-			sourceTree = BUILT_PRODUCTS_DIR;
-			};
-		0000002400008fa5b5180995 = {
-			isa = XCConfigurationList;
-			defaultConfigurationName = Release;
-			buildConfigurations = (
-				0000002600008fa5b5180995,
-				);
-			defaultConfigurationIsVisible = 0;
-			};
-		0000001100008fa5b5180995 = {
-			isa = PBXBuildFile;
-			fileRef = 0000001200008fa5b5180995;
-			};
-		0000001500008fa5b5180995 = {
-			isa = PBXBuildFile;
-			fileRef = 0000001600008fa5b5180995;
-			};
-		0000001400008fa5b5180995 = {
-			name = StdAfx.h;
-			fileEncoding = 4;
-			lastKnownFileType = sourcecode.cpp.h;
-			path = StdAfx.h;
-			isa = PBXFileReference;
-			sourceTree = "<group>";
-			};
-		0000000900008fa5b5180995 = {
-			isa = PBXBuildFile;
-			fileRef = 0000000A00008fa5b5180995;
-			};
-		0000000800008fa5b5180995 = {
-			name = StdAfx.cpp;
-			fileEncoding = 4;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			path = StdAfx.cpp;
-			isa = PBXFileReference;
-			sourceTree = "<group>";
-			};
-		0000002000008fa5b5180995 = {
-			dependencies = (
-				);
-			productReference = 0000001D00008fa5b5180995;
-			name = Release_Mac64;
-			productType = "com.apple.product-type.tool";
-			buildRules = (
-				);
-			isa = PBXNativeTarget;
-			productName = exefile;
-			buildConfigurationList = 0000002100008fa5b5180995;
-			buildPhases = (
-				0000001F00008fa5b5180995,
-				0000002200008fa5b5180995,
-				);
-			};
-		0000001900008fa5b5180995 = {
-			isa = PBXBuildFile;
-			fileRef = 0000001A00008fa5b5180995;
-			};
-		0000000E00008fa5b5180995 = {
-			name = CommandArguments.h;
-			fileEncoding = 4;
-			lastKnownFileType = sourcecode.cpp.h;
-			path = CommandArguments.h;
-			isa = PBXFileReference;
-			sourceTree = "<group>";
-			};
-		0000000A00008fa5b5180995 = {
-			name = ExeFileOsX.mm;
-			fileEncoding = 4;
-			lastKnownFileType = sourcecode.cpp.objcpp;
-			path = ExeFileOsX.mm;
-			isa = PBXFileReference;
-			sourceTree = "<group>";
-			};
-		0000000300008fa5b5180995 = {
-			isa = PBXBuildFile;
-			fileRef = 0000000400008fa5b5180995;
-			};
-		0000001600008fa5b5180995 = {
-			name = version.h;
-			fileEncoding = 4;
-			lastKnownFileType = sourcecode.cpp.h;
-			path = version.h;
-			isa = PBXFileReference;
-			sourceTree = "<group>";
-			};
-		0000000400008fa5b5180995 = {
-			name = ExeFile.cpp;
-			fileEncoding = 4;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			path = ExeFile.cpp;
-			isa = PBXFileReference;
-			sourceTree = "<group>";
-			};
-		0000000B00008fa5b5180995 = {
-			isa = PBXBuildFile;
-			fileRef = 0000000C00008fa5b5180995;
-			};
-		0000000F00008fa5b5180995 = {
-			isa = PBXBuildFile;
-			fileRef = 0000001000008fa5b5180995;
-			};
-		0000000100008fa5b5180995 = {
-			isa = PBXBuildFile;
-			fileRef = 0000000200008fa5b5180995;
-			};
-		0000001300008fa5b5180995 = {
-			isa = PBXBuildFile;
-			fileRef = 0000001400008fa5b5180995;
-			};
-		0000000200008fa5b5180995 = {
-			name = CommandArguments.cpp;
-			fileEncoding = 4;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			path = CommandArguments.cpp;
-			isa = PBXFileReference;
-			sourceTree = "<group>";
-			};
-		0000000600008fa5b5180995 = {
-			name = ExeFileWin32.cpp;
-			fileEncoding = 4;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			path = ExeFileWin32.cpp;
-			isa = PBXFileReference;
-			sourceTree = "<group>";
-			};
-		0000000700008fa5b5180995 = {
-			isa = PBXBuildFile;
-			fileRef = 0000000800008fa5b5180995;
-			};
-		0000000C00008fa5b5180995 = {
-			name = autoversion.h;
-			fileEncoding = 4;
-			lastKnownFileType = sourcecode.cpp.h;
-			path = autoversion.h;
-			isa = PBXFileReference;
-			sourceTree = "<group>";
-			};
-		0000001F00008fa5b5180995 = {
-			files = (
-				0000000100008fa5b5180995,
-				0000000300008fa5b5180995,
-				0000000500008fa5b5180995,
-				0000000700008fa5b5180995,
-				0000000900008fa5b5180995,
-				);
-			buildActionMask = 2147483647;
-			isa = PBXSourcesBuildPhase;
-			runOnlyForDeploymentPostprocessing = 0;
-			};
-		0000000D00008fa5b5180995 = {
-			isa = PBXBuildFile;
-			fileRef = 0000000E00008fa5b5180995;
-			};
-		0000002300008fa5b5180995 = {
+		000000230000e63e358652d5 = {
 			projectDirPath = "";
 			targets = (
-				0000002000008fa5b5180995,
+				000000200000e63e358652d5,
 				);
 			knownRegions = (
 				en,
@@ -300,15 +179,35 @@
 			projectRoot = "";
 			hasScannedForEncodings = 0;
 			compatibilityVersion = "Xcode 3.2";
-			mainGroup = 0000001E00008fa5b5180995;
+			mainGroup = 0000001E0000e63e358652d5;
 			attributes = {
 				ORGANIZATIONNAME = CCP;
 				LastUpgradeCheck = 0460;
 				};
 			isa = PBXProject;
-			buildConfigurationList = 0000002400008fa5b5180995;
+			buildConfigurationList = 000000240000e63e358652d5;
 			};
-		0000001800008fa5b5180995 = {
+		000000170000e63e358652d5 = {
+			isa = PBXBuildFile;
+			fileRef = 000000180000e63e358652d5;
+			};
+		0000000A0000e63e358652d5 = {
+			name = ExeFileOsX.mm;
+			fileEncoding = 4;
+			lastKnownFileType = sourcecode.cpp.objcpp;
+			path = ExeFileOsX.mm;
+			isa = PBXFileReference;
+			sourceTree = "<group>";
+			};
+		000000140000e63e358652d5 = {
+			name = StdAfx.h;
+			fileEncoding = 4;
+			lastKnownFileType = sourcecode.cpp.h;
+			path = StdAfx.h;
+			isa = PBXFileReference;
+			sourceTree = "<group>";
+			};
+		000000180000e63e358652d5 = {
 			name = libpython2.7.a;
 			fileEncoding = 4;
 			lastKnownFileType = archive.ar;
@@ -316,34 +215,135 @@
 			isa = PBXFileReference;
 			sourceTree = "<group>";
 			};
-		0000001B00008fa5b5180995 = {
+		000000260000e63e358652d5 = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				};
+			name = Release;
+			};
+		000000120000e63e358652d5 = {
+			name = resource.h;
+			fileEncoding = 4;
+			lastKnownFileType = sourcecode.cpp.h;
+			path = resource.h;
+			isa = PBXFileReference;
+			sourceTree = "<group>";
+			};
+		000000220000e63e358652d5 = {
+			files = (
+				000000170000e63e358652d5,
+				000000190000e63e358652d5,
+				);
+			buildActionMask = 2147483647;
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+			};
+		0000001F0000e63e358652d5 = {
+			files = (
+				000000010000e63e358652d5,
+				000000030000e63e358652d5,
+				000000050000e63e358652d5,
+				000000070000e63e358652d5,
+				000000090000e63e358652d5,
+				);
+			buildActionMask = 2147483647;
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+			};
+		000000030000e63e358652d5 = {
+			isa = PBXBuildFile;
+			fileRef = 000000040000e63e358652d5;
+			};
+		0000000B0000e63e358652d5 = {
+			isa = PBXBuildFile;
+			fileRef = 0000000C0000e63e358652d5;
+			};
+		0000000F0000e63e358652d5 = {
+			isa = PBXBuildFile;
+			fileRef = 000000100000e63e358652d5;
+			};
+		000000160000e63e358652d5 = {
+			name = version.h;
+			fileEncoding = 4;
+			lastKnownFileType = sourcecode.cpp.h;
+			path = version.h;
+			isa = PBXFileReference;
+			sourceTree = "<group>";
+			};
+		000000240000e63e358652d5 = {
+			isa = XCConfigurationList;
+			defaultConfigurationName = Release;
+			buildConfigurations = (
+				000000260000e63e358652d5,
+				);
+			defaultConfigurationIsVisible = 0;
+			};
+		000000210000e63e358652d5 = {
+			isa = XCConfigurationList;
+			defaultConfigurationName = Release;
+			buildConfigurations = (
+				000000250000e63e358652d5,
+				);
+			defaultConfigurationIsVisible = 0;
+			};
+		000000020000e63e358652d5 = {
+			name = CommandArguments.cpp;
+			fileEncoding = 4;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = CommandArguments.cpp;
+			isa = PBXFileReference;
+			sourceTree = "<group>";
+			};
+		0000001D0000e63e358652d5 = {
+			path = exefile.exe;
+			isa = PBXFileReference;
+			includeInIndex = 0;
+			explicitFileType = "compiled.mach-o.executable";
+			sourceTree = BUILT_PRODUCTS_DIR;
+			};
+		000000060000e63e358652d5 = {
+			name = ExeFileWin32.cpp;
+			fileEncoding = 4;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = ExeFileWin32.cpp;
+			isa = PBXFileReference;
+			sourceTree = "<group>";
+			};
+		000000090000e63e358652d5 = {
+			isa = PBXBuildFile;
+			fileRef = 0000000A0000e63e358652d5;
+			};
+		000000040000e63e358652d5 = {
+			name = ExeFile.cpp;
+			fileEncoding = 4;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = ExeFile.cpp;
+			isa = PBXFileReference;
+			sourceTree = "<group>";
+			};
+		0000001B0000e63e358652d5 = {
 			isa = PBXGroup;
 			sourceTree = "<group>";
 			children = (
-				0000000200008fa5b5180995,
-				0000000E00008fa5b5180995,
-				0000000400008fa5b5180995,
-				0000001000008fa5b5180995,
-				0000000A00008fa5b5180995,
-				0000000600008fa5b5180995,
-				0000000800008fa5b5180995,
-				0000001400008fa5b5180995,
-				0000000C00008fa5b5180995,
-				0000001200008fa5b5180995,
-				0000001600008fa5b5180995,
+				000000020000e63e358652d5,
+				0000000E0000e63e358652d5,
+				000000040000e63e358652d5,
+				000000100000e63e358652d5,
+				0000000A0000e63e358652d5,
+				000000060000e63e358652d5,
+				000000080000e63e358652d5,
+				000000140000e63e358652d5,
+				0000000C0000e63e358652d5,
+				000000120000e63e358652d5,
+				000000160000e63e358652d5,
 				);
 			name = "Source Files";
 			};
-		0000001C00008fa5b5180995 = {
-			isa = PBXGroup;
-			sourceTree = "<group>";
-			children = (
-				0000001800008fa5b5180995,
-				0000001A00008fa5b5180995,
-				);
-			name = Dependencies;
+		000000070000e63e358652d5 = {
+			isa = PBXBuildFile;
+			fileRef = 000000080000e63e358652d5;
 			};
 		};
 	objectVersion = 46;
-	rootObject = 0000002300008fa5b5180995;
+	rootObject = 000000230000e63e358652d5;
 	}
