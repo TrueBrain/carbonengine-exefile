@@ -39,28 +39,28 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>False</UseOfMfc>
     <IntDir>../temp/$(ProjectName)/$(Platform)/$(Configuration)/$(PlatformToolset)/</IntDir>
-    <OutDir>../../autobuild/$(ProjectName)/$(Platform)/</OutDir>
+    <OutDir>../../autobuild/$(ProjectName)/$(Platform)/$(PlatformToolset)/</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <TargetExt>.exe</TargetExt>
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>False</UseOfMfc>
     <IntDir>../temp/$(ProjectName)/$(Platform)/$(Configuration)/$(PlatformToolset)/</IntDir>
-    <OutDir>../../autobuild/$(ProjectName)/$(Platform)/</OutDir>
+    <OutDir>../../autobuild/$(ProjectName)/$(Platform)/$(PlatformToolset)/</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <TargetExt>.exe</TargetExt>
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>False</UseOfMfc>
     <IntDir>../temp/$(ProjectName)/$(Platform)/$(Configuration)/$(PlatformToolset)/</IntDir>
-    <OutDir>../../autobuild/$(ProjectName)/$(Platform)/</OutDir>
+    <OutDir>../../autobuild/$(ProjectName)/$(Platform)/$(PlatformToolset)/</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <TargetExt>.exe</TargetExt>
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>False</UseOfMfc>
     <IntDir>../temp/$(ProjectName)/$(Platform)/$(Configuration)/$(PlatformToolset)/</IntDir>
-    <OutDir>../../autobuild/$(ProjectName)/$(Platform)/</OutDir>
+    <OutDir>../../autobuild/$(ProjectName)/$(Platform)/$(PlatformToolset)/</OutDir>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)/Microsoft.Cpp.props" />
   <PropertyGroup Label="UserMacros">
