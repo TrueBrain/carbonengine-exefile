@@ -89,7 +89,7 @@
 					"../../../carbon/autobuild/blue/exefile/MacOsX$(ARCHS)/clang4.2/",
 					"../../../carbon/autobuild/stackless/MacOsX$(ARCHS)",
 					);
-				SYMROOT = "../../autobuild/ExeFile/MacOsX$(ARCHS)";
+				SYMROOT = "../../autobuild/ExeFile/MacOsX$(ARCHS)/clang4.2";
 				OBJROOT = "../temp/ExeFile/MacOsX$(ARCHS)/$(CONFIGURATION)/clang4.2";
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
