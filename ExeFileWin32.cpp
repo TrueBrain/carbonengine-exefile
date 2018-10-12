@@ -307,8 +307,8 @@ void myInvalidParameterHandler(const wchar_t* expression,
    uintptr_t pReserved)
 {
 	CCP_LOGERR( "ExeFile CRT invalid parameter handler: %s:%d in %s",
-		file?CW2A(file):"<none>", line, function?CW2A(function):"<none>");
-	CCP_LOGERR( "Expression: %s", expression?CW2A(expression):"<none>");
+		file?(const char*)CW2A(file):"<none>", line, function?(const char*)CW2A(function):"<none>");
+	CCP_LOGERR( "Expression: %s", expression?(const char*)CW2A(expression):"<none>");
 }
 
 void __cdecl PureCallHandler()

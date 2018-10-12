@@ -210,7 +210,7 @@ DWORD WINAPI ServiceEntrypoint(LPVOID lpParam)
 
 	SERVICE_TABLE_ENTRY ServiceTable[] =
 	{
-		{ "", (LPSERVICE_MAIN_FUNCTION)ServiceMain }
+		{ (LPSTR)"", (LPSERVICE_MAIN_FUNCTION)ServiceMain }
 	};
 
 	if (StartServiceCtrlDispatcher(ServiceTable) == FALSE)
