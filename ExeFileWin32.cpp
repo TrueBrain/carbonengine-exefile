@@ -128,7 +128,7 @@ bool BreakpadDumpCallback(const wchar_t* dump_path,
 			break;
 		case RESULT_SUCCEEDED:
 			// Actually a LOG_NOTICE
-			CCP_LOG( "Upload Crash Dump for b%d, %S, RESULT_SUCCEEDED: %S", g_buildno, fullFilePath, s_breakpadCrashUploaderResult.c_str());
+			CCP_LOGWARN( "Upload Crash Dump for b%d, %S, RESULT_SUCCEEDED: %S", g_buildno, fullFilePath, s_breakpadCrashUploaderResult.c_str());
 			break;
 		case RESULT_THROTTLED:
 			CCP_LOGWARN( "Upload Crash Dump for b%d, %S, RESULT_THROTTLED: %S", g_buildno, fullFilePath, s_breakpadCrashUploaderResult.c_str());
