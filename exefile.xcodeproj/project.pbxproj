@@ -110,7 +110,7 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path @loader_path/../Libraries @loader_path/../Frameworks";
 				SDKROOT = macosx;
-				WARNING_CFLAGS = "-Wno-nonportable-include-path -Wno-inconsistent-missing-override";
+				WARNING_CFLAGS = "-Wno-nonportable-include-path -Wno-inconsistent-missing-override -Wno-deprecated-register";
 				};
 			name = Release;
 			};
