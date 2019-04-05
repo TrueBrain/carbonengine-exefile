@@ -20,6 +20,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{45d900c1-96ee-5ea8-a7ba-54af60d6ce7a}</ProjectGuid>
+    <ProjectName>ExeFile</ProjectName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <PlatformToolset>v100</PlatformToolset>
