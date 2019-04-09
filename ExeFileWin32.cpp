@@ -113,6 +113,7 @@ bool BreakpadDumpCallback(const wchar_t* dump_path,
 	char reason[1024];
 	reason[1023]='\0';
 	int resultCode = -1;
+	int sentryResult = -1;
 
 	if( s_breakpadMinidumpUploader && g_commandArguments.uploadMinidump )
 	{
@@ -132,6 +133,25 @@ bool BreakpadDumpCallback(const wchar_t* dump_path,
 			break;
 		case RESULT_THROTTLED:
 			CCP_LOGWARN( "Upload Crash Dump for b%d, %S, RESULT_THROTTLED: %S", g_buildno, fullFilePath, s_breakpadCrashUploaderResult.c_str());
+			break;
+		}
+
+		ReportResult sentryRes = s_breakpadMinidumpUploader->SendCrashReport(L"https://sentry.io/api/1434648/minidump/?sentry_key=0b0785270cff40ab88073f3429a81eb4", s_breakpadMinidumpUploadHeaders, fullFilePath, &s_breakpadCrashUploaderResult );
+		sentryResult = (int)sentryRes;
+		switch( sentryRes )
+		{
+		case RESULT_FAILED:
+			CCP_LOGERR( "Upload Sentry minidump for b%d, %S, RESULT_FAILED: %S", g_buildno, fullFilePath, s_breakpadCrashUploaderResult.c_str());
+			break;
+		case RESULT_REJECTED:
+			CCP_LOGERR( "Upload Sentry minidump for b%d, %S, RESULT_REJECTED: %S", g_buildno, fullFilePath, s_breakpadCrashUploaderResult.c_str());
+			break;
+		case RESULT_SUCCEEDED:
+			// Actually a LOG_NOTICE
+			CCP_LOGWARN( "Upload Sentry minidump for b%d, %S, RESULT_SUCCEEDED: %S", g_buildno, fullFilePath, s_breakpadCrashUploaderResult.c_str());
+			break;
+		case RESULT_THROTTLED:
+			CCP_LOGWARN( "Upload Sentry minidump for b%d, %S, RESULT_THROTTLED: %S", g_buildno, fullFilePath, s_breakpadCrashUploaderResult.c_str());
 			break;
 		}
 
@@ -173,9 +193,9 @@ bool BreakpadDumpCallback(const wchar_t* dump_path,
 		{
 			Be::Time timeStamp = BeOS->GetActualTime();
 
-			CCP_LOG( "Writing to session file (%d, %I64d, %I64d, %d, %S, %d)", g_userId, g_sessionId, timeStamp, g_buildno, minidump_id, resultCode );
+			CCP_LOG( "Writing to session file (%d, %I64d, %I64d, %d, %S, %d %d)", g_userId, g_sessionId, timeStamp, g_buildno, minidump_id, resultCode, sentryResult);
 
-			fprintf( g_sessionFile, "- crashed\n- %d\n- %I64d\n- %I64d\n- %d\n- %S\n- %d\n", g_userId, g_sessionId, timeStamp, g_buildno, minidump_id, resultCode );
+			fprintf( g_sessionFile, "- crashed\n- %d\n- %I64d\n- %I64d\n- %d\n- %S\n- %d\n - %d\n", g_userId, g_sessionId, timeStamp, g_buildno, minidump_id, resultCode, sentryResult);
 			fflush( g_sessionFile );
 		}
 		else
