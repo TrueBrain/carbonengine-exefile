@@ -136,6 +136,17 @@ bool BreakpadDumpCallback(const wchar_t* dump_path,
 			break;
 		}
 
+		if (s_breakpadMinidumpUploadHeaders.count(L"sentry") > 0) { // Inject minidump ID into sentry JSON
+			std::wstring sentryJson = s_breakpadMinidumpUploadHeaders[L"sentry"];
+			s_breakpadMinidumpUploadHeaders[L"sentry"] = sentryJson.replace(sentryJson.find(L"UUIDPLACEHOLDER"), 15, minidump_id); 
+		} else {
+			std::wstring manualJson;
+			manualJson = manualJson + L"{\"tags\":{\"minidump_id\":\"" + minidump_id + L"\"}}";
+			s_breakpadMinidumpUploadHeaders[L"sentry"] = manualJson;
+		}
+
+		CCP_LOGWARN ( "%S", s_breakpadMinidumpUploadHeaders[L"sentry"].c_str() );
+
 		ReportResult sentryRes = s_breakpadMinidumpUploader->SendCrashReport(L"https://sentry.io/api/1434648/minidump/?sentry_key=0b0785270cff40ab88073f3429a81eb4", s_breakpadMinidumpUploadHeaders, fullFilePath, &s_breakpadCrashUploaderResult );
 		sentryResult = (int)sentryRes;
 		switch( sentryRes )
