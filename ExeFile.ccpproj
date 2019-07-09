@@ -33,7 +33,7 @@ vsPropertySheets:
 Manifest:
   AdditionalManifestFiles: 
   - autoversion.manifest
-  - dpiaware.manifest
+  EnableDpiAwareness: true
 
 ResourceCompile:
   Culture: "0x040f"

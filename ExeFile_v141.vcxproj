@@ -131,7 +131,8 @@
       <AdditionalIncludeDirectories>..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Manifest>
-      <AdditionalManifestFiles>autoversion.manifest;dpiaware.manifest;%(AdditionalManifestFiles)</AdditionalManifestFiles>
+      <AdditionalManifestFiles>autoversion.manifest;%(AdditionalManifestFiles)</AdditionalManifestFiles>
+      <EnableDpiAwareness>true</EnableDpiAwareness>
     </Manifest>
     <PreBuildEvent />
     <PreLinkEvent />
@@ -165,7 +166,8 @@
       <AdditionalIncludeDirectories>..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Manifest>
-      <AdditionalManifestFiles>autoversion.manifest;dpiaware.manifest;%(AdditionalManifestFiles)</AdditionalManifestFiles>
+      <AdditionalManifestFiles>autoversion.manifest;%(AdditionalManifestFiles)</AdditionalManifestFiles>
+      <EnableDpiAwareness>true</EnableDpiAwareness>
     </Manifest>
     <PreBuildEvent />
     <PreLinkEvent />
@@ -199,7 +201,8 @@
       <AdditionalIncludeDirectories>..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Manifest>
-      <AdditionalManifestFiles>autoversion.manifest;dpiaware.manifest;%(AdditionalManifestFiles)</AdditionalManifestFiles>
+      <AdditionalManifestFiles>autoversion.manifest;%(AdditionalManifestFiles)</AdditionalManifestFiles>
+      <EnableDpiAwareness>true</EnableDpiAwareness>
     </Manifest>
     <PreBuildEvent />
     <PreLinkEvent />
@@ -236,7 +239,8 @@
       <AdditionalIncludeDirectories>..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Manifest>
-      <AdditionalManifestFiles>autoversion.manifest;dpiaware.manifest;%(AdditionalManifestFiles)</AdditionalManifestFiles>
+      <AdditionalManifestFiles>autoversion.manifest;%(AdditionalManifestFiles)</AdditionalManifestFiles>
+      <EnableDpiAwareness>true</EnableDpiAwareness>
     </Manifest>
     <PreBuildEvent />
     <PreLinkEvent />
