@@ -117,25 +117,6 @@ bool BreakpadDumpCallback(const wchar_t* dump_path,
 
 	if( s_breakpadMinidumpUploader && g_commandArguments.uploadMinidump )
 	{
-		ReportResult res = s_breakpadMinidumpUploader->SendCrashReport(L"http://crashes.eveonline.com/UploadDump", s_breakpadMinidumpUploadHeaders, fullFilePath, &s_breakpadCrashUploaderResult );
-		resultCode = (int)res;
-		switch( res )
-		{
-		case RESULT_FAILED:
-			CCP_LOGERR( "Upload Crash Dump for b%d, %S, RESULT_FAILED: %S", g_buildno, fullFilePath, s_breakpadCrashUploaderResult.c_str());
-			break;
-		case RESULT_REJECTED:
-			CCP_LOGERR( "Upload Crash Dump for b%d, %S, RESULT_REJECTED: %S", g_buildno, fullFilePath, s_breakpadCrashUploaderResult.c_str());
-			break;
-		case RESULT_SUCCEEDED:
-			// Actually a LOG_NOTICE
-			CCP_LOGWARN( "Upload Crash Dump for b%d, %S, RESULT_SUCCEEDED: %S", g_buildno, fullFilePath, s_breakpadCrashUploaderResult.c_str());
-			break;
-		case RESULT_THROTTLED:
-			CCP_LOGWARN( "Upload Crash Dump for b%d, %S, RESULT_THROTTLED: %S", g_buildno, fullFilePath, s_breakpadCrashUploaderResult.c_str());
-			break;
-		}
-
 		if (s_breakpadMinidumpUploadHeaders.count(L"sentry") > 0) { // Inject minidump ID into sentry JSON
 			std::wstring sentryJson = s_breakpadMinidumpUploadHeaders[L"sentry"];
 			s_breakpadMinidumpUploadHeaders[L"sentry"] = sentryJson.replace(sentryJson.find(L"UUIDPLACEHOLDER"), 15, minidump_id); 
@@ -177,7 +158,7 @@ bool BreakpadDumpCallback(const wchar_t* dump_path,
 				g_quit ? "Quit" : "Crashed", 
 				exinfo->ExceptionRecord->ExceptionCode, 
 				g_buildno,
-				res == RESULT_SUCCEEDED ? "and uploaded" : "but not uploaded",
+				sentryResult == RESULT_SUCCEEDED ? "and uploaded" : "but not uploaded",
 				fullFilePath );
 		}
 	}
