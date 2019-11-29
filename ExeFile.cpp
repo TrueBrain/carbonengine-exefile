@@ -292,7 +292,7 @@ int Main()
 	if( !BeOS->Startup( g_commandArguments.pyOptimize, VERIFY_MANIFEST ) )
 	{
 		ShowBlueErr();
-		return -1;
+		return 3; // Blue startup error code
 	}
 	
 	// Now, enter stackless and continue running from there.  This allows stackless to initialize
