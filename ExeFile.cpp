@@ -278,8 +278,17 @@ int Main()
 	// Tell Blue about our crash interface so that it can set options and settings
 	BeCrashes = g_crashReporter;
 #endif
-
-	BlueInitializePaths();
+	std::wstring defaultPath;
+	if (BeOS->HasStartupArg(L"py")) {
+		// Python interpreter mode must not assume that the current working directory contains
+		// the expected relative paths passed from the varios *.args files.
+		// Instead, we're constructing a path relative to /the/path/to/exefile.exe, e.g.:
+		// c:/p4/eve/server/bin/x64/exefile.exe 
+		// -> c:/p4/eve/server/bin/x64/exefile.exe/../../../ 
+		// -> c:/p4/eve/server
+		defaultPath = CcpGetAbsolutePath(CcpExecutablePath() + L"/../../..");
+	}
+	BlueInitializePaths(defaultPath);
 	SetBlueSearchPaths( g_commandArguments.searchPaths );
 	BePaths->LogPaths();
 	BlueInitializeResourceLoading();
