@@ -226,8 +226,6 @@ DWORD WINAPI ServiceEntrypoint(LPVOID lpParam)
 
 int Main()
 {
-	BlueInitializeSocketLogger();
-
 	LogToLogfile( true, "" );
 
 	std::vector<std::wstring> commandLine;
@@ -236,6 +234,9 @@ int Main()
 
 	//where are we running?
 	ParseCommandLine( commandLine, g_commandArguments );
+
+	BlueModuleStartup();
+	BlueInitializeSocketLogger();
 
 #ifdef _WIN32
 	HANDLE sdcHandle = 0;
@@ -253,10 +254,6 @@ int Main()
 	if( g_commandArguments.assertLevel >= 0 )
 	{
 		SilenceAssert( g_commandArguments.assertLevel );
-	}
-	if( !g_commandArguments.workingDirectory.empty() )
-	{
-		SetWorkingDirectory( g_commandArguments.workingDirectory.c_str() );
 	}
 
 	//Initialize console and redirect stdoutput

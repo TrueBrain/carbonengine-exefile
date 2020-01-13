@@ -382,8 +382,6 @@ void ParseCommandLine( const CommandLine& commandLine, CommandArguments& command
 			commandArguments.redirectStdOut = arg.substr(8);
 		} else if ( larg.find( L"/assert=") == 0) {
 			commandArguments.assertLevel = _wtoi(arg.substr(8).c_str());
-		} else if( larg.find( L"/cwd=") == 0 ) {
-			commandArguments.workingDirectory = arg.substr(5);
 		} else if (larg == L"/service") {
 			commandArguments.asService = true;
 		}

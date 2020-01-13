@@ -20,7 +20,6 @@ struct CommandArguments
 	std::wstring redirectStdErr;
 	std::wstring redirectStdOut;
 	int assertLevel;
-	std::wstring workingDirectory;
 	bool asService;
 
 	CommandArguments()

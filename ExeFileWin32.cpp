@@ -557,12 +557,6 @@ void SetProcessAffinity( int affinity )
 	}
 }
 
-void SetWorkingDirectory( const wchar_t* directory )
-{
-	SetCurrentDirectoryW( directory );
-}
-
-
 
 int APIENTRY WinMain( HINSTANCE, HINSTANCE, LPSTR, int )
 {
