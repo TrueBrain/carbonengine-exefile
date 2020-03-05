@@ -306,6 +306,7 @@ int Main()
 	if( !BeOS->RunStackless() )
 	{
 		ShowBlueErr();
+		return 4;
 	}
 
 #ifdef _WIN32
