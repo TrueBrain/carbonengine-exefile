@@ -275,7 +275,7 @@ int Main()
 	// Tell Blue about our crash interface so that it can set options and settings
 	BeCrashes = g_crashReporter;
 #endif
-	std::wstring defaultPath;
+	std::wstring defaultPath = CcpGetCurrentWorkingDirectory();
 	if (BeOS->HasStartupArg(L"py")) {
 		// Python interpreter mode must not assume that the current working directory contains
 		// the expected relative paths passed from the varios *.args files.
