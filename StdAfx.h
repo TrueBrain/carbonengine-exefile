@@ -1,22 +1,32 @@
 // stdafx.h : include file for standard system include files,
 //      or project specific include files that are used frequently,
 //      but are changed infrequently
-//#define STRICT
-//#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
+#define STRICT
+#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
+
+
+// comment this out if you want python
+//#define NOPYTHON
+
+#if (defined(_WIN32) && _MSC_VER < 1400 && !_DLL)
+#define NOSTDEXCEPT
+#endif
+
+#ifdef NOSTDEXCEPT
+// Not using c++ exceptions
+#define _HAS_EXCEPTIONS 0
+#if _MSC_VER < 1400
+#include <exception>
+using std::exception;
+#endif
+#endif
 
 #ifdef _WIN32
-
 #include <windows.h>
-
-#ifdef max
-#undef max
 #endif
-
-#endif
-
 #include "BlueExposure/include/BlueExposure.h"
-#include <blue/Include/Blue.h>
-#include <blue/Include/IBlueOS.h>
+#include <blue/include/Blue.h>
+#include <blue/include/IBlueOS.h>
 
 #ifdef __APPLE__
 #ifdef toupper
@@ -41,3 +51,4 @@
 #undef isupper
 #endif
 #endif
+

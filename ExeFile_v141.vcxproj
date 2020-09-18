@@ -103,8 +103,8 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PreprocessorDefinitions>CRASH_REPORTS_ENABLED=1;NDEBUG;WIN32;BLUEPROJECT;BLUE_WITH_PYTHON=1;CCP_MEMORY_REPLACE_OPERATOR_NEW=0;CCP_STACKLESS=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\carbon\src\stackless\pc;$(CcpBranchPath)/carbon/src;$(CcpSdkPath)/crashpad/1c77abe9095655e250713fef0996f1aa5c4c04b8/include;$(CcpSdkPath)\telemetry\3.0.1.1719\include;.;..\..\..\carbon\src\stackless\include;..\..\..\carbon\src\stackless\stackless;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>BREAKPAD_ENABLED=1;NDEBUG;WIN32;BLUEPROJECT;BLUE_WITH_PYTHON=1;CCP_MEMORY_REPLACE_OPERATOR_NEW=0;CCP_STACKLESS=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\..\carbon\src\stackless\pc;$(CcpBranchPath)/carbon/src;$(CcpSdkPath)/GoogleBreakpad/2011-7-27/src;$(CcpSdkPath)\telemetry\3.0.1.1719\include;.;..\..\..\carbon\src\stackless\include;..\..\..\carbon\src\stackless\stackless;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>True</MultiProcessorCompilation>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <WholeProgramOptimization>True</WholeProgramOptimization>
@@ -115,16 +115,15 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <Optimization>MaxSpeed</Optimization>
       <WarningLevel>Level3</WarningLevel>
-      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(CcpSdkPath)/crashpad/1c77abe9095655e250713fef0996f1aa5c4c04b8/lib/Windows/$(Platform)/$(PlatformToolset);..\..\..\carbon\autobuild\stackless\$(Platform)\$(PlatformToolset);$(CcpSdkPath)\telemetry\3.0.1.1719\lib;../../../carbon/autobuild/blue/exefile/$(Platform)/$(PlatformToolset)/;..\..\..\carbon\autobuild\stackless\$(Platform)\$(PlatformToolset);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(CcpSdkPath)/GoogleBreakpad/2011-7-27/lib/$(PlatformToolset)/$(Platform);..\..\..\carbon\autobuild\stackless\$(Platform)\$(PlatformToolset);$(CcpSdkPath)\telemetry\3.0.1.1719\lib;../../../carbon/autobuild/blue/exefile/$(Platform)/$(PlatformToolset)/;..\..\..\carbon\autobuild\stackless\$(Platform)\$(PlatformToolset);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>True</GenerateDebugInformation>
       <LargeAddressAware>True</LargeAddressAware>
       <ProgramDatabaseFile>$(TargetDir)$(TargetName).pdb</ProgramDatabaseFile>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
       <GenerateManifest>False</GenerateManifest>
-      <AdditionalDependencies>blue.lib;base.lib;client.lib;util.lib;python27.lib;rad_tm_win64.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>blue.lib;breakpad_common.lib;crash_generation_client.lib;crash_report_sender.lib;exception_handler.lib;python27.lib;rad_tm_win64.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ResourceCompile>
       <Culture>0x040f</Culture>
@@ -143,7 +142,7 @@
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PreprocessorDefinitions>WIN32;_DEBUG;BLUEPROJECT;BLUE_WITH_PYTHON=1;CCP_MEMORY_REPLACE_OPERATOR_NEW=0;CCP_STACKLESS=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\carbon\src\stackless\pc;$(CcpBranchPath)/carbon/src;$(CcpSdkPath)/crashpad/1c77abe9095655e250713fef0996f1aa5c4c04b8/include;$(CcpSdkPath)\telemetry\3.0.1.1719\include;.;..\..\..\carbon\src\stackless\include;..\..\..\carbon\src\stackless\stackless;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\carbon\src\stackless\pc;$(CcpBranchPath)/carbon/src;$(CcpSdkPath)/GoogleBreakpad/2011-7-27/src;$(CcpSdkPath)\telemetry\3.0.1.1719\include;.;..\..\..\carbon\src\stackless\include;..\..\..\carbon\src\stackless\stackless;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>True</MultiProcessorCompilation>
       <TreatWarningAsError>True</TreatWarningAsError>
       <PrecompiledHeaderOutputFile>$(IntDir)exefile.pch</PrecompiledHeaderOutputFile>
@@ -152,7 +151,6 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <Optimization>Disabled</Optimization>
       <WarningLevel>Level3</WarningLevel>
-      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>..\..\..\carbon\autobuild\stackless\$(Platform)\$(PlatformToolset);$(CcpSdkPath)\telemetry\3.0.1.1719\lib;../../../carbon/autobuild/blue/exefile/$(Platform)/$(PlatformToolset)/;..\..\..\carbon\autobuild\stackless\$(Platform)\$(PlatformToolset);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -179,7 +177,7 @@
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PreprocessorDefinitions>WIN32;_DEBUG;BLUEPROJECT;BLUE_WITH_PYTHON=1;CCP_MEMORY_REPLACE_OPERATOR_NEW=0;CCP_STACKLESS=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\carbon\src\stackless\pc;$(CcpBranchPath)/carbon/src;$(CcpSdkPath)/crashpad/1c77abe9095655e250713fef0996f1aa5c4c04b8/include;$(CcpSdkPath)\telemetry\3.0.1.1719\include;.;..\..\..\carbon\src\stackless\include;..\..\..\carbon\src\stackless\stackless;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\carbon\src\stackless\pc;$(CcpBranchPath)/carbon/src;$(CcpSdkPath)/GoogleBreakpad/2011-7-27/src;$(CcpSdkPath)\telemetry\3.0.1.1719\include;.;..\..\..\carbon\src\stackless\include;..\..\..\carbon\src\stackless\stackless;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>True</MultiProcessorCompilation>
       <TreatWarningAsError>True</TreatWarningAsError>
       <PrecompiledHeaderOutputFile>$(IntDir)exefile.pch</PrecompiledHeaderOutputFile>
@@ -188,7 +186,6 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <Optimization>Disabled</Optimization>
       <WarningLevel>Level3</WarningLevel>
-      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>..\..\..\carbon\autobuild\stackless\$(Platform)\$(PlatformToolset);$(CcpSdkPath)\telemetry\3.0.1.1719\lib;../../../carbon/autobuild/blue/exefile/$(Platform)/$(PlatformToolset)/;..\..\..\carbon\autobuild\stackless\$(Platform)\$(PlatformToolset);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -214,8 +211,8 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PreprocessorDefinitions>CRASH_REPORTS_ENABLED=1;NDEBUG;WIN32;BLUEPROJECT;BLUE_WITH_PYTHON=1;CCP_MEMORY_REPLACE_OPERATOR_NEW=0;CCP_STACKLESS=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\carbon\src\stackless\pc;$(CcpBranchPath)/carbon/src;$(CcpSdkPath)/crashpad/1c77abe9095655e250713fef0996f1aa5c4c04b8/include;$(CcpSdkPath)\telemetry\3.0.1.1719\include;.;..\..\..\carbon\src\stackless\include;..\..\..\carbon\src\stackless\stackless;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>BREAKPAD_ENABLED=1;NDEBUG;WIN32;BLUEPROJECT;BLUE_WITH_PYTHON=1;CCP_MEMORY_REPLACE_OPERATOR_NEW=0;CCP_STACKLESS=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\..\carbon\src\stackless\pc;$(CcpBranchPath)/carbon/src;$(CcpSdkPath)/GoogleBreakpad/2011-7-27/src;$(CcpSdkPath)\telemetry\3.0.1.1719\include;.;..\..\..\carbon\src\stackless\include;..\..\..\carbon\src\stackless\stackless;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>True</MultiProcessorCompilation>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <WholeProgramOptimization>True</WholeProgramOptimization>
@@ -226,16 +223,15 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <Optimization>MaxSpeed</Optimization>
       <WarningLevel>Level3</WarningLevel>
-      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(CcpSdkPath)/crashpad/1c77abe9095655e250713fef0996f1aa5c4c04b8/lib/Windows/$(Platform)/$(PlatformToolset);..\..\..\carbon\autobuild\stackless\$(Platform)\$(PlatformToolset);$(CcpSdkPath)\telemetry\3.0.1.1719\lib;../../../carbon/autobuild/blue/exefile/$(Platform)/$(PlatformToolset)/;..\..\..\carbon\autobuild\stackless\$(Platform)\$(PlatformToolset);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(CcpSdkPath)/GoogleBreakpad/2011-7-27/lib/$(PlatformToolset)/$(Platform);..\..\..\carbon\autobuild\stackless\$(Platform)\$(PlatformToolset);$(CcpSdkPath)\telemetry\3.0.1.1719\lib;../../../carbon/autobuild/blue/exefile/$(Platform)/$(PlatformToolset)/;..\..\..\carbon\autobuild\stackless\$(Platform)\$(PlatformToolset);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>True</GenerateDebugInformation>
       <LargeAddressAware>True</LargeAddressAware>
       <ProgramDatabaseFile>$(TargetDir)$(TargetName).pdb</ProgramDatabaseFile>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
       <GenerateManifest>False</GenerateManifest>
-      <AdditionalDependencies>blue.lib;base.lib;client.lib;util.lib;python27.lib;rad_tm_win32.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>blue.lib;breakpad_common.lib;crash_generation_client.lib;crash_report_sender.lib;exception_handler.lib;python27.lib;rad_tm_win32.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ResourceCompile>
       <Culture>0x040f</Culture>
@@ -251,22 +247,20 @@
     <PostBuildEvent />
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Crashpad.h" />
-    <ClInclude Include="version.h" />
-    <ClInclude Include="StdAfx.h" />
+    <ClInclude Include="autoversion.h" />
     <ClInclude Include="CommandArguments.h" />
     <ClInclude Include="ExeFile.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="autoversion.h" />
+    <ClInclude Include="StdAfx.h" />
+    <ClInclude Include="version.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Crashpad.cpp" />
-    <ClCompile Include="ExeFile.cpp" />
     <ClCompile Include="CommandArguments.cpp" />
+    <ClCompile Include="ExeFile.cpp" />
+    <ClCompile Include="ExeFileWin32.cpp" />
     <ClCompile Include="StdAfx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="ExeFileWin32.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ExeFile.rc" />
