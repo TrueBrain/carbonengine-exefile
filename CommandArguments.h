@@ -45,4 +45,6 @@ void GetCommandLine( const char** argv, int argc, CommandLine& commandLine );
 void DumpCommandLineToDebugger( const CommandLine& commandLine );
 void ParseCommandLine( const CommandLine& commandLine, CommandArguments& commandArguments );
 
+extern CommandArguments g_commandArguments;
+
 #endif
