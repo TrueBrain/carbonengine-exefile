@@ -21,9 +21,12 @@ using std::exception;
 #endif
 #endif
 
+#define NOMINMAX
+
 #ifdef _WIN32
 #include <windows.h>
 #endif
+
 #include "BlueExposure/include/BlueExposure.h"
 #include <blue/include/Blue.h>
 #include <blue/include/IBlueOS.h>

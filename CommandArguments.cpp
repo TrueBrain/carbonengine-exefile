@@ -23,7 +23,7 @@ void Usage()
 	fprintf(stderr, "       /assert=<lvl> (3=dialogue box (default),  2=crash, 1=exit, 0=ignore)\n");
 	fprintf(stderr, "       /stderr=<path with %%p as pid>\n");
 	fprintf(stderr, "       /stdout=<path with %%p as pid>\n");
-	fprintf(stderr, "       /noBreakpadUpload\n");
+	fprintf(stderr, "       /noCrashReportUpload\n");
 	fprintf(stderr, "       /service\n");
 	fprintf(stderr, "       paths can start with $(cwd)\n");
 	exit( 0 );
@@ -81,8 +81,8 @@ CommandLine SplitCommandLine(const wchar_t *line)
 			if( !arg.empty() )
 			{
 				result.push_back( arg );
-                arg = L"";
-                continue;
+				arg = L"";
+				continue;
 			}
 		}
 		else if( *i == L'"' )
@@ -174,7 +174,7 @@ void ExpandFileContents( const std::wstring& filename, std::vector<std::wstring>
 #ifdef _WIN32
 	is.open( filename.c_str() );
 #else
-    is.open( CW2A( filename.c_str() ) );
+	is.open( CW2A( filename.c_str() ) );
 #endif
 	if( !is.good() )
 	{
@@ -255,19 +255,19 @@ extern char** g_originalArgv;
 
 const wchar_t* GetCommandLineString()
 {
-    static std::wstring commandLine;
-    if( commandLine.empty() )
-    {
-        for( int i = 0; i < g_originalArgc; ++i )
-        {
-            if( i )
-            {
-                commandLine += L' ';
-            }
-            commandLine += CA2W( g_originalArgv[i] );
-        }
-    }
-    return commandLine.c_str();
+	static std::wstring commandLine;
+	if( commandLine.empty() )
+	{
+		for( int i = 0; i < g_originalArgc; ++i )
+		{
+			if( i )
+			{
+				commandLine += L' ';
+			}
+			commandLine += CA2W( g_originalArgv[i] );
+		}
+	}
+	return commandLine.c_str();
 }
 
 #endif
@@ -302,7 +302,7 @@ void DumpCommandLineToDebugger( const CommandLine& commandLine )
 #ifndef _WIN32
 int _wtoi( const wchar_t* str )
 {
-    return atoi( CW2A( str ) );
+	return atoi( CW2A( str ) );
 }
 #endif
 
@@ -370,7 +370,7 @@ void ParseCommandLine( const CommandLine& commandLine, CommandArguments& command
 			commandArguments.consoleMode = console_mode_off;
 		} else if (larg == L"/inherit") {
 			commandArguments.consoleMode = console_mode_inherit;
-		} else if (larg == L"/nobreakpadupload") {
+		} else if (larg == L"/nocrashreportupload") {
 			commandArguments.uploadMinidump = false;
 		} else if (larg.find(L"/aflock=")==0) {
 			commandArguments.affinity = _wtoi(arg.substr(8).c_str());
@@ -385,7 +385,6 @@ void ParseCommandLine( const CommandLine& commandLine, CommandArguments& command
 		} else if (larg == L"/service") {
 			commandArguments.asService = true;
 		}
-
 	}
 	
 	if( verbose )
