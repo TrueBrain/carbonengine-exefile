@@ -1,6 +1,5 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "ExeFile.h"
-#include "Crashpad.h"
 
 // logging
 #include <Logger/Logger.h>
@@ -15,7 +14,9 @@
 
 #include <fstream>
 
-#include "blue/Include/IBluePaths.h"
+#include "blue/include/Blue.h"
+#include "blue/include/IBlueOS.h"
+#include "blue/include/IBluePaths.h"
 
 #include "CommandArguments.h"
 
@@ -65,28 +66,28 @@ void SetBlueSearchPaths( const std::vector<std::wstring>& searchPaths )
 //ExeFile.com in conjunction with shell redirection to do this.
 void RedirectOutput( FILE* which, const wchar_t* pattern )
 {
-	std::wstring tmp;
-	const wchar_t *f = wcsstr( pattern, L"%p" );
-	if( f )
-	{
-		tmp = std::wstring( pattern, ( f-pattern ) );
-		tmp += std::to_wstring( uint64_t( CcpGetCurrentProcessId() ) );
-		tmp += std::wstring( f + 2 );
-		pattern = tmp.c_str();
-	}
-	FILE *os;
+    std::wstring tmp;
+    const wchar_t *f = wcsstr( pattern, L"%p" );
+    if( f )
+    {
+        tmp = std::wstring( pattern, ( f-pattern ) );
+        tmp += std::to_wstring( uint64_t( CcpGetCurrentProcessId() ) );
+        tmp += std::wstring( f + 2 );
+        pattern = tmp.c_str();
+    }
+    FILE *os;
 #ifdef _WIN32
-	//don"t use _wfreopen_s, because it uses no-sharing for the file
-	//(one can't browse it until the process dies)
+    //don"t use _wfreopen_s, because it uses no-sharing for the file
+    //(one can't browse it until the process dies)
 #pragma warning( suppress : 4996 )
-	os = _wfreopen(pattern, L"a", which);
+    os = _wfreopen(pattern, L"a", which);
 #else
-	os = freopen( CW2A( pattern ), "a", which );
+    os = freopen( CW2A( pattern ), "a", which );
 #endif
-	if( os )
-	{
-		setvbuf(os, 0, _IONBF, 2);
-	}
+    if( os )
+    {
+        setvbuf(os, 0, _IONBF, 2);
+    }
 }
 
 #ifdef _WIN32
@@ -225,25 +226,14 @@ DWORD WINAPI ServiceEntrypoint(LPVOID lpParam)
 
 int Main()
 {
-#if !_DEBUG
-	auto crashReporter = GetCrashReporter();
-	if( crashReporter->InitializeCrashpad() )
-	{
-		// Tell Blue about our crash interface so that it can set options and settings
-		BeCrashes = crashReporter;
-	}
-#endif
-	
+	LogToLogfile( true, "" );
+
 	std::vector<std::wstring> commandLine;
 	GetCommandLine( commandLine );
 	DumpCommandLineToDebugger( commandLine );
 
 	//where are we running?
 	ParseCommandLine( commandLine, g_commandArguments );
-
-#if !_DEBUG
-	crashReporter->EnableCrashReporting( g_commandArguments.uploadMinidump );
-#endif
 
 	BlueModuleStartup();
 	BlueInitializeSocketLogger();
@@ -280,7 +270,11 @@ int Main()
 	PreStartupTest();
 
 	BeOS->SetStartupArgs( commandLine );
-	
+
+#if BREAKPAD_ENABLED
+	// Tell Blue about our crash interface so that it can set options and settings
+	BeCrashes = g_crashReporter;
+#endif
 	std::wstring defaultPath = CcpGetCurrentWorkingDirectory();
 	if (BeOS->HasStartupArg(L"py")) {
 		// Python interpreter mode must not assume that the current working directory contains

@@ -1,7 +1,7 @@
 Imports:
 - ../core_project/core_project.yaml
 - ../blue/Include/uses_blue.yaml
-- ../../../vendor/GoogleBreakPad/2020-3-16/BreakPad.yaml
+- ../../../vendor/GoogleBreakPad/2011-7-27/BreakPad.yaml
 
 General:
   ConfigurationType: Application
@@ -68,7 +68,7 @@ Configurations:
       LinkTimeCodeGeneration: UseLinkTimeCodeGeneration
       AdditionalDependencies:
       - exception_handler.lib
-      - common.lib
+      - breakpad_common.lib
       - crash_generation_client.lib
       - crash_report_sender.lib
       - wininet.lib
