@@ -62,7 +62,7 @@
 					"../../../../../../sdk/GoogleBreakpad/2011-7-27/src",
 					.,
 					"../../../carbon/src/stackless/stackless",
-					"../../../../../../sdk/telemetry/3.5.0.13/include",
+					"../../../../../../sdk/telemetry/3.0.1.1008/include",
 					);
 				CLANG_WARN_INT_CONVERSION = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -86,7 +86,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"../../../carbon/bin/stackless/MacOsX$(ARCHS)",
 					"../../../carbon/autobuild/stackless/MacOsX$(ARCHS)/clang4.2",
-					"../../../../../../sdk/telemetry/3.5.0.13/lib",
+					"../../../../../../sdk/telemetry/3.0.1.1008/lib",
 					"../../../carbon/autobuild/blue/exefile/MacOsX$(ARCHS)/clang4.2/",
 					);
 				SYMROOT = "../../autobuild/ExeFile/MacOsX$(ARCHS)/clang4.2";
