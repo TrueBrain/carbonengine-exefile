@@ -225,15 +225,6 @@ DWORD WINAPI ServiceEntrypoint(LPVOID lpParam)
 
 int Main()
 {
-#if !_DEBUG
-	auto crashReporter = GetCrashReporter();
-	if( crashReporter->InitializeCrashpad() )
-	{
-		// Tell Blue about our crash interface so that it can set options and settings
-		BeCrashes = crashReporter;
-	}
-#endif
-	
 	std::vector<std::wstring> commandLine;
 	GetCommandLine( commandLine );
 	DumpCommandLineToDebugger( commandLine );
@@ -242,7 +233,13 @@ int Main()
 	ParseCommandLine( commandLine, g_commandArguments );
 
 #if !_DEBUG
-	crashReporter->EnableCrashReporting( g_commandArguments.uploadMinidump );
+	auto crashReporter = GetCrashReporter();
+	if( g_commandArguments.uploadMinidump )
+	{
+		crashReporter->InitializeCrashpad();
+	}
+	// Tell Blue about our crash interface so that it can change settings
+	BeCrashes = crashReporter;
 #endif
 
 	BlueModuleStartup();
