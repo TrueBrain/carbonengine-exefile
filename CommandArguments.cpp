@@ -20,11 +20,11 @@ void Usage()
 	fprintf(stderr, "       /aflock=<aff>\n");
 	fprintf(stderr, "       /jessica\n");
 	fprintf(stderr, "       /pyoptimize=<opt>\n");
-	fprintf(stderr, "       /assert=<lvl> (3=dialogue box (default),  2=crash, 1=exit, 0=ignore)\n");
 	fprintf(stderr, "       /stderr=<path with %%p as pid>\n");
 	fprintf(stderr, "       /stdout=<path with %%p as pid>\n");
 	fprintf(stderr, "       /noCrashReportUpload\n");
 	fprintf(stderr, "       /service\n");
+	fprintf(stderr, "       /buildflavor=<flavor>\n");
 	fprintf(stderr, "       paths can start with $(cwd)\n");
 	exit( 0 );
 }
@@ -67,7 +67,7 @@ bool GetEnvironmentVar(std::wstring *val, const wchar_t *name)
 	return false;
 }
 
-#else 
+#else
 
 CommandLine SplitCommandLine(const wchar_t *line)
 {
@@ -188,15 +188,15 @@ void ExpandFileContents( const std::wstring& filename, std::vector<std::wstring>
 		is >> a;
 
 		std::wstring wa = TrimLeft( std::wstring( CA2W( a.c_str() ) ) );
-		
+
 		if( wa.length() > 0 )
 		{
 			if( wa[0] == L'@' )
 			{
 				std::wstring filename = wa.substr(1);
 				ExpandFileContents( filename, argv );
-			} 
-			else 
+			}
+			else
 			{
 				argv.push_back( wa );
 			}
@@ -204,8 +204,10 @@ void ExpandFileContents( const std::wstring& filename, std::vector<std::wstring>
 	}
 }
 
-void ExpandCommandLineWithFiles( const std::vector<std::wstring>& source, std::vector<std::wstring>& destination )
+CommandLine ExpandCommandLineWithFiles( const std::vector<std::wstring>& source )
 {
+	CommandLine destination;
+
 	for( auto it = std::begin( source ); it != std::end( source ); ++it )
 	{
 		if( ( *it )[0] == L'@' )
@@ -218,15 +220,17 @@ void ExpandCommandLineWithFiles( const std::vector<std::wstring>& source, std::v
 			destination.push_back( *it );
 		}
 	}
+
+	return destination;
 }
 
 std::wstring ToLower( const std::wstring &s )
 {
 	std::wstring r = s;
-	for( size_t i = 0; i< s.size(); i++ ) 
+	for( size_t i = 0; i< s.size(); i++ )
 	{
 		wchar_t c = r[i];
-		if( iswupper( c ) ) 
+		if( iswupper( c ) )
 		{
 			wchar_t lc = towlower( c );
 			if( iswlower( lc ) )
@@ -241,74 +245,56 @@ std::wstring ToLower( const std::wstring &s )
 
 }
 
-#ifdef _WIN32
-
-const wchar_t* GetCommandLineString()
+#if _WIN32
+CommandLine ParseCommandLine()
 {
-    return GetCommandLineW();
+	auto rawCommandLine = SplitCommandLine( GetCommandLineW() );
+	return ExpandCommandLineWithFiles( ExpandCommandLineWithEnvironment( rawCommandLine ) );
 }
-
-#else
-
-extern int g_originalArgc;
-extern char** g_originalArgv;
-
-const wchar_t* GetCommandLineString()
-{
-	static std::wstring commandLine;
-	if( commandLine.empty() )
-	{
-		for( int i = 0; i < g_originalArgc; ++i )
-		{
-			if( i )
-			{
-				commandLine += L' ';
-			}
-			commandLine += CA2W( g_originalArgv[i] );
-		}
-	}
-	return commandLine.c_str();
-}
-
-#endif
-
-void GetCommandLine( CommandLine& commandLine )
-{
-	auto rawCommandLine = SplitCommandLine( GetCommandLineString() );
-	ExpandCommandLineWithFiles( ExpandCommandLineWithEnvironment( rawCommandLine ), commandLine );
-}
-
-void GetCommandLine( const char** argv, int argc, CommandLine& commandLine )
+#elif __APPLE__
+CommandLine ParseCommandLine( int argc, char* argv[] )
 {
 	CommandLine rawCommandLine;
 	for( int i = 0; i < argc; ++i )
 	{
 		rawCommandLine.push_back( std::wstring( CA2W( argv[i] ) ) );
 	}
-	ExpandCommandLineWithFiles( ExpandCommandLineWithEnvironment( rawCommandLine ), commandLine );
+	return ExpandCommandLineWithFiles( ExpandCommandLineWithEnvironment( rawCommandLine ) );
 }
-
-void DumpCommandLineToDebugger( const CommandLine& commandLine )
-{
-#ifdef _WIN32
-	for( auto it = std::begin( commandLine ); it != std::end( commandLine ); ++it )
-	{
-		OutputDebugStringW( it->c_str() );
-		OutputDebugStringW( L"\n" );
-	}
 #endif
-}
 
-#ifndef _WIN32
+#if !_WIN32
 int _wtoi( const wchar_t* str )
 {
 	return atoi( CW2A( str ) );
 }
 #endif
 
-void ParseCommandLine( const CommandLine& commandLine, CommandArguments& commandArguments )
+void DumpCommandLineToDebugger( const CommandLine& commandLine )
+{
+#if __APPLE__
+	if ( !CcpIsDebuggerPresent() ) {
+		return;
+	}
+#endif
+
+    for( auto it = std::begin( commandLine ); it != std::end( commandLine ); ++it )
+    {
+#if _WIN32
+        OutputDebugStringW( it->c_str() );
+        OutputDebugStringW( L"\n" );
+#elif __APPLE__
+        wprintf(L"%ls\n", it->c_str());
+#else
+#error "Unsupported platform!"
+#endif
+    }
+}
+
+CommandArguments GetCommandArguments( const CommandLine& commandLine )
 {
 	bool verbose = false;
+	CommandArguments commandArguments;
 
 	//Environment var way of turning on our spiffy new _inherit mode.
 	//This is used by ExeFile.com
@@ -316,7 +302,7 @@ void ParseCommandLine( const CommandLine& commandLine, CommandArguments& command
 	{
 		commandArguments.consoleMode = console_mode_inherit;
 	}
-	
+
 	// Special case: If started witout arguments, it behaves as though eve.exe had
 	// started it.  This is to support "pinning to taskbar" on windows 7.
 	// Later we want better taskbar support.
@@ -335,7 +321,7 @@ void ParseCommandLine( const CommandLine& commandLine, CommandArguments& command
 	// Old-style path for libpath
 	std::wstring libPath;
 
-	for( size_t i = 1; i < commandLine.size(); i++ ) 
+	for( size_t i = 1; i < commandLine.size(); i++ )
 	{
 		const std::wstring &arg = commandLine[i];
 		const std::wstring larg = ToLower(arg);
@@ -380,13 +366,13 @@ void ParseCommandLine( const CommandLine& commandLine, CommandArguments& command
 			commandArguments.redirectStdErr = arg.substr(8);
 		} else if (larg.find(L"/stdout=") == 0) {
 			commandArguments.redirectStdOut = arg.substr(8);
-		} else if ( larg.find( L"/assert=") == 0) {
-			commandArguments.assertLevel = _wtoi(arg.substr(8).c_str());
 		} else if (larg == L"/service") {
 			commandArguments.asService = true;
+		} else if (larg.find(L"/buildflavor=") == 0) {
+			commandArguments.buildFlavor = arg.substr(13);
 		}
 	}
-	
+
 	if( verbose )
 	{
 		fprintf(stdout, "%S starting up\n", commandLine.size()>0?commandLine[0].c_str() : L"ExeFile.exe");
@@ -398,5 +384,8 @@ void ParseCommandLine( const CommandLine& commandLine, CommandArguments& command
 		fprintf(stdout, "/aflock=%d\n", commandArguments.affinity);
 		fprintf(stdout, "/pyoptimize=%d\n", commandArguments.pyOptimize);
 		fprintf(stdout, "/service=%s\n", commandArguments.asService ? "yes" : "no");
+		fprintf(stdout, "/buildflavor=%S\n", commandArguments.buildFlavor.c_str());
 	}
+
+	return commandArguments;
 }

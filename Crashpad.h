@@ -1,10 +1,5 @@
 #if !_DEBUG
 
-#if __APPLE__
-std::string GetAppdataFolder();
-#elif _WIN32
-std::wstring GetAppdataFolder();
-#endif
 
 class AnnotationData;
 namespace crashpad

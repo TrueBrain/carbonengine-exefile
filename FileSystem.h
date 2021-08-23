@@ -1,0 +1,12 @@
+#pragma once
+
+#if __APPLE__
+std::string GetAppdataFolder();
+#elif _WIN32
+std::wstring GetAppdataFolder();
+#else
+#error Unsupported platform
+#endif
+
+bool CreateDirectoryRec(const wchar_t* dir);
+const std::wstring& GetLogsFolder();

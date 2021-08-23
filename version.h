@@ -14,5 +14,3 @@
 #define EVEFILETYPE VFT_APP
 
 #include "autoversion.h"
-//standard file version thing
-#include <../version/evebuildver.h>

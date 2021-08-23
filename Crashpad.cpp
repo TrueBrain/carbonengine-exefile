@@ -3,19 +3,16 @@
 #if !_DEBUG
 
 #include "Crashpad.h"
+#include "FileSystem.h"
 
 #include "client/annotation.h"
 #include "client/crashpad_client.h"
 #include "client/crash_report_database.h"
 #include "client/settings.h"
 
-// TODO: Replace experimental with regular filesystem
-#include <experimental/filesystem>
-namespace fs = std::experimental::filesystem;
-
 #if _WIN32
 
-auto executablePath = "eve_crashmon.exe";
+auto executablePath = L"eve_crashmon.exe";
 
 #elif __APPLE__
 
@@ -69,30 +66,34 @@ bool CrashpadCrashInterface::InitializeCrashpad()
 		return false;
 	}
 
-	fs::path logsFolder;
-	try
-	{
-		logsFolder = fs::path( appdata ).append( "CCP" ).append( "EVE" ).append( "Crashes" );
-		fs::create_directories( logsFolder );
-	}
-	catch( const fs::filesystem_error& e )
-	{
-		fprintf( stderr, "Filesystem error when initializing crashpad path: %s", e.what() );
-		return false;
-	}
-	catch( const std::exception& e )
-	{
-		fprintf( stderr, "Unexpected exception during crashpad path initialization: %s", e.what() );
-		return false;
-	}
-	catch( ... )
-	{
-		fprintf( stderr, "Unhandled exception when initializing crashpad path" );
-		return false;
-	}
+    std::wstring logsFolder = GetLogsFolder();
+    if( logsFolder.empty() )
+    {
+        fprintf( stderr, "Failed to find folder for crashpad logs" );
+        return false;
+    }
+    if( !CreateDirectoryRec(logsFolder.c_str()) )
+    {
+        fprintf( stderr, "Failed to create folder for crashpad logs" );
+        return false;
+    }
 
-	base::FilePath handler( fs::path( CcpExecutablePath() ).parent_path().append( executablePath ) );
+
+	
+#ifdef __APPLE__
+	std::string exePath = (const char*)CW2A( CcpExecutablePath().c_str() );
+	base::FilePath handler(exePath);
+	handler = handler.DirName().Append( executablePath );
+	std::string sLogsFolder = (const char*)CW2A( logsFolder.c_str() );
+	base::FilePath reportsDir( sLogsFolder );
+#elif _WIN32
+	std::wstring exePath = CcpExecutablePath();
+	base::FilePath handler( exePath );
+	handler = handler.DirName().Append( executablePath );
 	base::FilePath reportsDir( logsFolder );
+#else
+#error Unsupported platform
+#endif
 	base::FilePath metricsDir( reportsDir );
 	std::string url = "https://sentry.io/api/1434648/minidump/?sentry_key=0b0785270cff40ab88073f3429a81eb4";
 	std::map<std::string, std::string> annotations;
@@ -131,8 +132,8 @@ void CrashpadCrashInterface::SetCrashKeyValue( const char* key, const char* val 
 	{
 		return;
 	}
-
-	if( auto found = m_annotations.find( key ); found != m_annotations.end() )
+	auto found = m_annotations.find( key );
+	if( found != m_annotations.end() )
 	{
 		found->second->SetValue( val );
 	}

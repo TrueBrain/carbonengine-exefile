@@ -2,7 +2,7 @@
 #ifndef CommandArguments_H
 #define CommandArguments_H
 
-enum ConsoleMode 
+enum ConsoleMode
 {
 	console_mode_off,		//deprecated: Neither attach nor create.
 	console_mode_inherit,   //attach to whatever you have access to
@@ -19,8 +19,8 @@ struct CommandArguments
 	int pyOptimize;// = 1 or = -1 for _DEBUG
 	std::wstring redirectStdErr;
 	std::wstring redirectStdOut;
-	int assertLevel;
 	bool asService;
+	std::wstring buildFlavor;
 
 	CommandArguments()
 		:consoleMode( console_mode_create ),
@@ -31,7 +31,6 @@ struct CommandArguments
 #else
 		pyOptimize( 1 ),
 #endif
-		assertLevel( -1 ),
 		asService( false )
 	{
 	}
@@ -39,10 +38,13 @@ struct CommandArguments
 
 typedef std::vector<std::wstring> CommandLine;
 
-void GetCommandLine( CommandLine& commandLine );
-void GetCommandLine( const char** argv, int argc, CommandLine& commandLine );
+#if _WIN32
+CommandLine ParseCommandLine();
+#elif __APPLE__
+CommandLine ParseCommandLine( int argc, char* argv[] );
+#endif
 
 void DumpCommandLineToDebugger( const CommandLine& commandLine );
-void ParseCommandLine( const CommandLine& commandLine, CommandArguments& commandArguments );
+CommandArguments GetCommandArguments( const CommandLine& commandLine );
 
 #endif

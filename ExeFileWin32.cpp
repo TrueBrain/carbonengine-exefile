@@ -20,9 +20,9 @@ std::string FmtError(DWORD err = 0)
 		err = olderr;
 
 	LPVOID lpMsgBuf;
-	DWORD ok = FormatMessage( 
-		FORMAT_MESSAGE_ALLOCATE_BUFFER | 
-		FORMAT_MESSAGE_FROM_SYSTEM | 
+	DWORD ok = FormatMessage(
+		FORMAT_MESSAGE_ALLOCATE_BUFFER |
+		FORMAT_MESSAGE_FROM_SYSTEM |
 		FORMAT_MESSAGE_IGNORE_INSERTS,
 		NULL,
 		err,
@@ -30,13 +30,13 @@ std::string FmtError(DWORD err = 0)
 		(LPTSTR) &lpMsgBuf,
 		0,
 		NULL );
-	
+
 	if (!ok && GetLastError() == ERROR_RESOURCE_LANG_NOT_FOUND)
 	{
 		//try again using default language
-		ok = FormatMessage( 
-		FORMAT_MESSAGE_ALLOCATE_BUFFER | 
-		FORMAT_MESSAGE_FROM_SYSTEM | 
+		ok = FormatMessage(
+		FORMAT_MESSAGE_ALLOCATE_BUFFER |
+		FORMAT_MESSAGE_FROM_SYSTEM |
 		FORMAT_MESSAGE_IGNORE_INSERTS,
 		NULL,
 		err,
@@ -52,16 +52,16 @@ std::string FmtError(DWORD err = 0)
 		return "";
 	}
 
-	std::string r((LPTSTR)lpMsgBuf);  
+	std::string r((LPTSTR)lpMsgBuf);
 	LocalFree( lpMsgBuf );
 	SetLastError(olderr);
 	return r;
 }
 
 void myInvalidParameterHandler(const wchar_t* expression,
-   const wchar_t* function, 
-   const wchar_t* file, 
-   unsigned int line, 
+   const wchar_t* function,
+   const wchar_t* file,
+   unsigned int line,
    uintptr_t pReserved)
 {
 	CCP_LOGERR( "ExeFile CRT invalid parameter handler: %s:%d in %s",
@@ -120,7 +120,7 @@ void ShowConsoleWindow(ConsoleMode mode)
 	{
 		//We detect those file redirection handles by our ability to set
 		//their inheritance flags.  Console handles can't do that.
-		//(cmd.exe will pass on _its_ stdio handles, even if they are to 
+		//(cmd.exe will pass on _its_ stdio handles, even if they are to
 		//a console, and they won't work for us).
 		HANDLE h = GetStdHandle(hKeys[i]);
 		if (h && SetHandleInformation(h, HANDLE_FLAG_INHERIT, HANDLE_FLAG_INHERIT))
@@ -215,8 +215,8 @@ void PreStartupTest()
 
 	if(!IsProcessorFeaturePresent(PF_XMMI64_INSTRUCTIONS_AVAILABLE))
 	{
-		MessageBox( NULL, 
-					"SSE2 support is needed to run this game.\nClick \'OK\' to continue but the game will probably shut down.", 
+		MessageBox( NULL,
+					"SSE2 support is needed to run this game.\nClick \'OK\' to continue but the game will probably shut down.",
 					"SSE2 needed",
 					MB_ICONEXCLAMATION | MB_OK );
 	}
@@ -230,7 +230,7 @@ void SetProcessAffinity( int affinity )
 
 	typedef WINBASEAPI BOOL WINAPI maskfn( IN HANDLE process, IN DWORD_PTR mask );
 	maskfn* proc = (maskfn*)GetProcAddress( kernel32, "SetProcessAffinityMask" );
-		
+
 	if( me && kernel32 && proc && proc( me, mask ) )
 	{
 		CCP_LOG( "Process affinity mask is %d", mask );
@@ -258,8 +258,9 @@ int APIENTRY WinMain( HINSTANCE, HINSTANCE, LPSTR, int )
 	_set_purecall_handler( &PureCallHandler );
 
 	g_mainThreadId = GetCurrentThreadId();
-	
-	int retcode = Main();
+
+	CommandLine commandLine = ParseCommandLine();
+	int retcode = Main( commandLine );
 
 
 	// If the game was launched from Media Center, find the window and restore
@@ -272,118 +273,6 @@ int APIENTRY WinMain( HINSTANCE, HINSTANCE, LPSTR, int )
 	}
 
 	return retcode;
-}
-
-// The silencing of asserts.  _ASSERT is redirected to a handler func
-// that outputs the assert and then calls abort()
-// retular assert() also alls abort().
-// We then modify abort behavior to not output a dialogue box.
-// We also set a the report mode for _ASSERT (not used, because the
-// report hook gets there first) so that other parts of the application
-// can see if we have modified the destination for asserts at all.
-// This allows CCP_ASSERT to be silenced too.
-
-static int ReportHook_exit( int reportType, char *message, int *returnValue )
-{
-	if (reportType == _CRT_ASSERT) {
-		fprintf(stderr, "%s", message);
-		CCP_LOGERR( "%s", message);
-		BeOS->Terminate(1);
-	}
-	return FALSE;
-}
-
-static int ReportHook_crash( int reportType, char *message, int *returnValue )
-{
-	if (reportType == _CRT_ASSERT) {
-		fprintf(stderr, "%s", message);
-		CCP_LOGERR( "%s", message);
-		CcpCrashOnPurpose();
-		abort();
-	}
-	return FALSE;
-}
-
-static int ReportHook_abort( int reportType, char *message, int *returnValue )
-{
-	if (reportType == _CRT_ASSERT) {
-		fprintf(stderr, "%s", message);
-		CCP_LOGERR( "%s", message);
-		abort();
-	}
-	return FALSE;
-}
-
-static int ReportHook_handle( int reportType, char *message, int *returnValue )
-{
-	if (reportType == _CRT_ASSERT) {
-		fprintf(stderr, "%s", message);
-		CCP_LOGERR( "%s", message);
-		return TRUE;
-	}
-	return FALSE;
-}
-
-CCPAssertResult CcpReportHookExit( int severity, const char* message )
-{
-	int returnValue = 0;
-	ReportHook_exit( _CRT_ASSERT, const_cast<char*>( message ), &returnValue );
-	return CCP_ASSERT_RESULT_NONE;
-}
-
-CCPAssertResult CcpReportHookCrash( int severity, const char* message )
-{
-	int returnValue = 0;
-	ReportHook_crash( _CRT_ASSERT, const_cast<char*>( message ), &returnValue );
-	return CCP_ASSERT_RESULT_NONE;
-}
-
-CCPAssertResult CcpReportHookAbort( int severity, const char* message )
-{
-	int returnValue = 0;
-	ReportHook_abort( _CRT_ASSERT, const_cast<char*>( message ), &returnValue );
-	return CCP_ASSERT_RESULT_NONE;
-}
-
-CCPAssertResult CcpReportHookHandle( int severity, const char* message )
-{
-	int returnValue = 0;
-	ReportHook_handle( _CRT_ASSERT, const_cast<char*>( message ), &returnValue );
-	return CCP_ASSERT_RESULT_NONE;
-}
-
-void SilenceAssert(int level)
-{
-	int (*hook)(int, char*, int*);
-	CcpAssertHook ccpHook;
-	if (level == 0) {
-		hook = ReportHook_handle;
-		ccpHook = CcpReportHookHandle;
-	} else if (level == 1) {
-		hook = ReportHook_abort;
-		ccpHook = CcpReportHookAbort;
-	} else if (level == 2) {
-		hook = ReportHook_crash;
-		ccpHook = CcpReportHookCrash;
-	} else if (level == 3) {
-		hook = ReportHook_exit;
-		ccpHook = CcpReportHookExit;
-	} else {
-		return;
-	}
-	_CrtSetReportHook2(_CRT_RPTHOOK_INSTALL, hook);
-	CcpAssertSetReportHook( ccpHook );
-
-	// Set abort behaviour to REPORTFAULT only (disable the message which typcially
-	// is a dialogue box.
-	int flags = _CALL_REPORTFAULT;
-	_set_abort_behavior(flags, _WRITE_ABORT_MSG |_CALL_REPORTFAULT);
-}
-
-std::wstring GetAppdataFolder()
-{
-	wchar_t path[MAX_PATH];
-	return SUCCEEDED( SHGetFolderPathW( nullptr, CSIDL_LOCAL_APPDATA, nullptr, SHGFP_TYPE_CURRENT, path ) ) ? path : L"";
 }
 
 #endif

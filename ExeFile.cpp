@@ -1,11 +1,9 @@
 #include "StdAfx.h"
 #include "ExeFile.h"
 #include "Crashpad.h"
+#include "BlueInterface.h"
 
-// logging
-#include <Logger/Logger.h>
 #include <CcpCore/include/CCPLog.h>
-
 
 #include <errno.h>
 #include <string>
@@ -15,11 +13,7 @@
 
 #include <fstream>
 
-#include "blue/Include/IBluePaths.h"
-
 #include "CommandArguments.h"
-
-CommandArguments g_commandArguments;
 
 const char* g_moduleName = "ExeFile";
 
@@ -29,18 +23,18 @@ const char* g_moduleName = "ExeFile";
 #include <windows.h>
 #endif
 
-void ShowBlueErr()
+void ShowBlueErr( const BlueInterface& blue )
 {
-	if (BeOS->GetError(0))
+	if( blue.GetBeOS()->GetError( 0 ) )
 	{
 		char* err = NULL;
-		BeOS->FormatError(&err);
-		BeOS->SetError(BEFLUSH); //output to logger
-		BeOS->SetError(BECLEAR); //clear it
+		blue.GetBeOS()->FormatError( &err );
+		blue.GetBeOS()->SetError( BEFLUSH ); //output to logger
+		blue.GetBeOS()->SetError( BECLEAR ); //clear it
 	}
 }
 
-void SetBlueSearchPaths( const std::vector<std::wstring>& searchPaths )
+void SetBlueSearchPaths( const BlueInterface& blue, const std::vector<std::wstring>& searchPaths )
 {
 	for( std::vector<std::wstring>::const_iterator it = searchPaths.begin(); it != searchPaths.end(); ++it )
 	{
@@ -48,14 +42,14 @@ void SetBlueSearchPaths( const std::vector<std::wstring>& searchPaths )
 		size_t pos = s.find_first_of( L'=');
 		if( pos == std::wstring::npos )
 		{
-			CCP_LOGWARN( "Invalid path specification: %S", s.c_str() );
+			blue.LogFuncChannel( CCP::GetModuleChannel(), CCP::LOGTYPE_WARN, 0, "Invalid path specification: %S", s.c_str() );
 			continue;
 		}
 
 		std::wstring keyW = s.substr( 0, pos );
 		std::wstring valueW = s.substr( pos + 1 );
 
-		BePaths->SetSearchPathW( CW2A( keyW.c_str() ), valueW.c_str() );
+		blue.GetBluePaths()->SetSearchPathW( CW2A( keyW.c_str() ), valueW.c_str() );
 	}
 }
 
@@ -222,107 +216,144 @@ DWORD WINAPI ServiceEntrypoint(LPVOID lpParam)
 
 #endif
 
-
-int Main()
+int Main(const CommandLine& commandLine)
 {
-	std::vector<std::wstring> commandLine;
-	GetCommandLine( commandLine );
-	DumpCommandLineToDebugger( commandLine );
+    DumpCommandLineToDebugger( commandLine );
+    CommandArguments commandArguments = GetCommandArguments( commandLine );
 
-	//where are we running?
-	ParseCommandLine( commandLine, g_commandArguments );
+	BlueInterface blue;
+	bool defaultedBlueFlavor = false;
+	std::wstring flavor = commandArguments.buildFlavor;
+	if( flavor == L"release" )
+	{
+		flavor = L"";
+	}
+
+	const std::vector<std::wstring> validBuildFlavors
+	{
+		L"", // Release
+		L"internal",
+		L"debug",
+	};
+
+	if( std::find( std::begin( validBuildFlavors ), std::end( validBuildFlavors ), flavor ) == std::end( validBuildFlavors ) )
+	{
+		flavor = L"";
+		defaultedBlueFlavor = true;
+	}
+
+	if( !blue.LoadBlue( flavor ) )
+	{
+		fprintf( stderr, "Failed to load Blue flavor: '%S', trying default\n", flavor.c_str() );
+
+		if( flavor.empty() || !blue.LoadBlue( L"" ) )
+		{
+			fprintf( stderr, "Failed to load release Blue flavor\n" );
+			fflush( stderr );
+			return 5;
+		}
+
+		defaultedBlueFlavor = true;
+	}
 
 #if !_DEBUG
 	auto crashReporter = GetCrashReporter();
-	if( g_commandArguments.uploadMinidump )
+	if( commandArguments.uploadMinidump )
 	{
 		crashReporter->InitializeCrashpad();
 	}
 	// Tell Blue about our crash interface so that it can change settings
-	BeCrashes = crashReporter;
+	blue.SetCrashReporter( crashReporter );
 #endif
 
-	BlueModuleStartup();
-	BlueInitializeSocketLogger();
+	blue.ModuleStartup();
+	blue.InitializeSocketLogger();
+
+	if( defaultedBlueFlavor )
+	{
+		blue.LogFuncChannel( CCP::GetModuleChannel(), CCP::LOGTYPE_ERR, 0, "Could not load Blue flavor '%S', defaulted to release flavor.", commandArguments.buildFlavor.c_str() );
+	}
+	else
+	{
+		blue.LogFuncChannel( CCP::GetModuleChannel(), CCP::LOGTYPE_NOTICE, 0, "Loaded Blue flavor '%S'", flavor.c_str() );
+	}
 
 #ifdef _WIN32
 	HANDLE sdcHandle = 0;
-	if (g_commandArguments.asService == true)
+	if (commandArguments.asService == true)
 	{
 		sdcHandle = CreateThread(NULL, 0, ServiceEntrypoint, NULL, 0, NULL);
 		if (sdcHandle == NULL)
 		{
-			CCP_LOGERR("Failed to set up windows service ctrl.");
+			blue.LogFuncChannel( CCP::GetModuleChannel(), CCP::LOGTYPE_ERR, 0, "Failed to set up windows service ctrl." );
 			return 0;
 		}
 	}
 #endif
 
-	if( g_commandArguments.assertLevel >= 0 )
-	{
-		SilenceAssert( g_commandArguments.assertLevel );
-	}
-
 	//Initialize console and redirect stdoutput
-	ShowConsoleWindow( g_commandArguments.consoleMode );
-	if( g_commandArguments.redirectStdErr.size() )
+	ShowConsoleWindow( commandArguments.consoleMode );
+	if( commandArguments.redirectStdErr.size() )
 	{
-		RedirectOutput( stderr, g_commandArguments.redirectStdErr.c_str() );
+		RedirectOutput( stderr, commandArguments.redirectStdErr.c_str() );
 	}
-	if( g_commandArguments.redirectStdOut.size() )
+	if( commandArguments.redirectStdOut.size() )
 	{
-		RedirectOutput( stdout, g_commandArguments.redirectStdOut.c_str() );
+		RedirectOutput( stdout, commandArguments.redirectStdOut.c_str() );
 	}
 
 	PreStartupTest();
 
-	BeOS->SetStartupArgs( commandLine );
-	
+	blue.GetBeOS()->SetStartupArgs( commandLine );
+
+	bool interpreterMode = blue.GetBeOS()->HasStartupArg( L"py" );
+
 	std::wstring defaultPath = CcpGetCurrentWorkingDirectory();
-	if (BeOS->HasStartupArg(L"py")) {
+	if( interpreterMode )
+	{
 		// Python interpreter mode must not assume that the current working directory contains
 		// the expected relative paths passed from the varios *.args files.
 		// Instead, we're constructing a path relative to /the/path/to/exefile.exe, e.g.:
-		// c:/p4/eve/server/bin/x64/exefile.exe 
-		// -> c:/p4/eve/server/bin/x64/exefile.exe/../../../ 
+		// c:/p4/eve/server/bin/x64/exefile.exe
+		// -> c:/p4/eve/server/bin/x64/exefile.exe/../../../
 		// -> c:/p4/eve/server
 		defaultPath = CcpGetAbsolutePath(CcpExecutablePath() + L"/../../..");
 	}
-	BlueInitializePaths(defaultPath);
-	SetBlueSearchPaths( g_commandArguments.searchPaths );
-	BePaths->LogPaths();
-	BlueInitializeResourceLoading();
-	
-	if( g_commandArguments.affinity != -1 )
+	blue.InitializePaths( defaultPath );
+	SetBlueSearchPaths( blue, commandArguments.searchPaths );
+	blue.GetBluePaths()->LogPaths();
+	blue.InitializeResourceLoading();
+
+	if( commandArguments.affinity != -1 )
 	{
-		SetProcessAffinity( g_commandArguments.affinity );
+		SetProcessAffinity( commandArguments.affinity );
 	}
 
-	if( !BeOS->Startup( g_commandArguments.pyOptimize, VERIFY_MANIFEST ) )
+	if( !blue.GetBeOS()->Startup( commandArguments.pyOptimize, interpreterMode ? IGNORE_MANIFEST : VERIFY_MANIFEST ) )
 	{
-		ShowBlueErr();
+		ShowBlueErr( blue );
 		return 3; // Blue startup error code
 	}
-	
+
 	// Now, enter stackless and continue running from there.  This allows stackless to initialize
 	// the main tasklet.
-	if( !BeOS->RunStackless() )
+	if( !blue.GetBeOS()->RunStackless() )
 	{
-		ShowBlueErr();
+		ShowBlueErr( blue );
 		return 4;
 	}
 
 #ifdef _WIN32
-	CCP_LOGNOTICE("Windows Service Stop Event Triggered");
+	blue.LogFuncChannel( CCP::GetModuleChannel(), CCP::LOGTYPE_NOTICE, 0, "Windows Service Stop Event Triggered" );
 	SetEvent(g_ServiceStopEvent);
 	WaitForSingleObject(sdcHandle, 5000);
 	CloseHandle(sdcHandle);
 #endif
-	
-	// Normally the RunStackless function will terminate the app before even 
+
+	// Normally the RunStackless function will terminate the app before even
 	// reaching here.  But just in case that doesn't happen we call Terminate,
 	// it's the only way to be sure :)
-	BeOS->Terminate();	
+	blue.GetBeOS()->Terminate();
 
 	// Stop the compiler from complaining - we won't get here
 	return 0;
