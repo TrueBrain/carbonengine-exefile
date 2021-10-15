@@ -233,6 +233,7 @@ int Main(const CommandLine& commandLine)
 	{
 		L"", // Release
 		L"internal",
+		L"trinitydev",
 		L"debug",
 	};
 
