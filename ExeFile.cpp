@@ -34,11 +34,10 @@ void ShowBlueErr( const BlueInterface& blue )
 	}
 }
 
-void SetBlueSearchPaths( const BlueInterface& blue, const std::vector<std::wstring>& searchPaths )
+bool SetBlueSearchPaths( const BlueInterface& blue, const std::vector<std::wstring>& searchPaths )
 {
-	for( std::vector<std::wstring>::const_iterator it = searchPaths.begin(); it != searchPaths.end(); ++it )
+	for( const std::wstring & s : searchPaths )
 	{
-		const std::wstring& s = *it;
 		size_t pos = s.find_first_of( L'=');
 		if( pos == std::wstring::npos )
 		{
@@ -49,8 +48,13 @@ void SetBlueSearchPaths( const BlueInterface& blue, const std::vector<std::wstri
 		std::wstring keyW = s.substr( 0, pos );
 		std::wstring valueW = s.substr( pos + 1 );
 
-		blue.GetBluePaths()->SetSearchPathW( CW2A( keyW.c_str() ), valueW.c_str() );
+		if( !BeIsSuccess( blue.GetBluePaths()->SetSearchPathW( CW2A( keyW.c_str() ), valueW.c_str() ) ) )
+		{
+			return false;
+		}
 	}
+
+	return true;
 }
 
 
@@ -321,7 +325,12 @@ int Main(const CommandLine& commandLine)
 		defaultPath = CcpGetAbsolutePath(CcpExecutablePath() + L"/../../..");
 	}
 	blue.InitializePaths( defaultPath );
-	SetBlueSearchPaths( blue, commandArguments.searchPaths );
+	if( !SetBlueSearchPaths( blue, commandArguments.searchPaths ) )
+	{
+		blue.LogFuncChannel( CCP::GetModuleChannel(), CCP::LOGTYPE_ERR, 0, "Error setting search paths. You might have a circular reference." );
+		ShowBlueErr( blue );
+		return 6; // Search path argument error
+	}
 	blue.GetBluePaths()->LogPaths();
 	blue.InitializeResourceLoading();
 
