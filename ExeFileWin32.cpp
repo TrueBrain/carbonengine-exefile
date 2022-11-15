@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 #ifdef _WIN32
 #include "ExeFile.h"
-#include "CcpCore/include/CcpCrash.h"
+#include <CcpCrash.h>
 #include <fcntl.h>
 #include <Shlobj.h>
 

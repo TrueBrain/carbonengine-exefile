@@ -5,7 +5,7 @@
 #import <Foundation/Foundation.h>
 #include "ExeFile.h"
 #include "Crashpad.h"
-#include "CcpCore/include/CcpCrash.h"
+#include <CcpCrash.h>
 #include <fcntl.h>
 
 #if CCP_MEMORY_REPLACE_OPERATOR_NEW

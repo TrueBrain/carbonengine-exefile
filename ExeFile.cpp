@@ -3,7 +3,7 @@
 #include "Crashpad.h"
 #include "BlueInterface.h"
 
-#include <CcpCore/include/CCPLog.h>
+#include <CCPLog.h>
 
 #include <errno.h>
 #include <string>
@@ -368,4 +368,3 @@ int Main(const CommandLine& commandLine)
 	// Stop the compiler from complaining - we won't get here
 	return 0;
 }
-
