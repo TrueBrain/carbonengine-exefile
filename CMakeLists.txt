@@ -71,7 +71,7 @@ endif()
 
 target_compile_definitions(Exefile PRIVATE BLUEBUILD_STATIC CRASH_REPORTS_ENABLED)
 
-target_link_libraries(Exefile PUBLIC BlueExposure Crashpad::Crashpad)
+target_link_libraries(Exefile PUBLIC Blue Crashpad::Crashpad)
 
 target_include_directories(Exefile
     PUBLIC
