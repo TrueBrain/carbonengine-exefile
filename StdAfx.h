@@ -28,8 +28,8 @@ using std::exception;
 #endif
 
 #include <BlueExposure.h>
-#include <blue/Include/Blue.h>
-#include <blue/Include/IBlueOS.h>
+#include <../../Blue/include/Blue.h>
+#include <../../Blue/include/IBlueOS.h>
 
 #ifdef __APPLE__
 #ifdef toupper
