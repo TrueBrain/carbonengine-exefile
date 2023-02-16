@@ -19,25 +19,13 @@ list(INSERT CMAKE_MODULE_PATH 0 ${BRANCH_ROOT_DIR}/cmake)
 
 include(CcpGlobalSettings)
 
-
 find_package(Crashpad CONFIG REQUIRED NO_CMAKE_PATH)
 find_package(Blue CONFIG REQUIRED NO_CMAKE_PATH)
 
-#get_property(<variable>
-#             <GLOBAL             |
-#              DIRECTORY [<dir>]  |
-#              TARGET    <target> |
-#              SOURCE    <source>
-#                        [DIRECTORY <dir> | TARGET_DIRECTORY <target>] |
-#              INSTALL   <file>   |
-#              TEST      <test>   |
-#              CACHE     <entry>  |
-#              VARIABLE           >
-#             PROPERTY <name>
-#             [SET | DEFINED | BRIEF_DOCS | FULL_DOCS])
-get_property(BLUE_INCLUDE_DIRECTORY
-        INCLUDE_PATH_DIRECTORIES
-        PROPERTY include)
+
+get_target_property(BLUE_INCLUDE_DIRECTORY
+        Blue
+        INTERFACE_INCLUDE_DIRECTORIES)
 
 add_executable(Exefile
     autoversion.h
@@ -64,7 +52,7 @@ add_executable(Exefile
 
 target_precompile_headers(Exefile PRIVATE StdAfx.h)
 
-set_target_properties(Exefile PROPERTIES OUPTUT_NAME exefile)
+set_target_properties(Exefile PROPERTIES OUTPUT_NAME exefile)
 
 if(WIN32)
     set_target_properties(Exefile PROPERTIES WIN32_EXECUTABLE True)
@@ -74,8 +62,8 @@ if(APPLE)
     enable_language(OBJCXX)
     target_link_libraries(Exefile PRIVATE "-framework Foundation")
     set_target_properties(
-        Exefile 
-        PROPERTIES 
+        Exefile
+        PROPERTIES
         BUILD_WITH_INSTALL_RPATH TRUE
         INSTALL_RPATH "@executable_path/.")
 endif()
@@ -84,12 +72,10 @@ target_compile_definitions(Exefile PRIVATE BLUEBUILD_STATIC CRASH_REPORTS_ENABLE
 
 target_link_libraries(Exefile PUBLIC BlueExposure Crashpad::Crashpad)
 
-target_include_directories(Blue PRIVATE ${BLUE_INCLUDE_DIRECTORY})
 
 target_include_directories(Exefile
     PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/src
-        ${CMAKE_CURRENT_SOURCE_DIR}/..
+        ${BLUE_INCLUDE_DIRECTORY}
 )
 
 set_target_properties(Exefile PROPERTIES OUTPUT_NAME "exefile")
