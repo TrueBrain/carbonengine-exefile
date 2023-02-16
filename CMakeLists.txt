@@ -20,8 +20,8 @@ list(INSERT CMAKE_MODULE_PATH 0 ${BRANCH_ROOT_DIR}/cmake)
 include(CcpGlobalSettings)
 
 
-find_package(Crashpad REQUIRED NO_CMAKE_PATH)
-find_package(Blue REQUIRED NO_CMAKE_PATH)
+find_package(Crashpad CONFIG REQUIRED NO_CMAKE_PATH)
+find_package(Blue CONFIG REQUIRED NO_CMAKE_PATH)
 
 get_directory_property(BLUE_INCLUDE_DIRECTORY INTERFACE_INCLUDE_DIRECTORIES include)
 
