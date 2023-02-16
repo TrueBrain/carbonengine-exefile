@@ -19,35 +19,11 @@ list(INSERT CMAKE_MODULE_PATH 0 ${BRANCH_ROOT_DIR}/cmake)
 
 include(CcpGlobalSettings)
 
-#list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_SOURCE_DIR}/cmake)
-
-
-#if(APPLE)
-#    add_executable(Exefile)
-#elseif(WIN32)
-#    add_executable(Exefile WIN32)
-#endif()
-
-#target_sources(Exefile PRIVATE 
-#    autoversion.h
-#    CommandArguments.cpp
-#    CommandArguments.h
-#    Crashpad.cpp
-#    Crashpad.h
-#    ExeFile.cpp
-#    ExeFile.h
-#    ExeFileOsX.mm
-#    ExeFileWin32.cpp
-#    FileSystem.h
-#    FileSystemOsX.mm
-#    FileSystemWin32.cpp
-#    resource.h
-#    StdAfx.cpp
-#    StdAfx.h
-#    version.h)
 
 find_package(Crashpad REQUIRED NO_CMAKE_PATH)
 find_package(Blue REQUIRED NO_CMAKE_PATH)
+
+get_directory_property(BLUE_INCLUDE_DIRECTORY INTERFACE_INCLUDE_DIRECTORIES include)
 
 add_executable(Exefile
     autoversion.h
@@ -94,10 +70,9 @@ target_compile_definitions(Exefile PRIVATE BLUEBUILD_STATIC CRASH_REPORTS_ENABLE
 
 target_link_libraries(Exefile PUBLIC BlueExposure Crashpad::Crashpad)
 
+target_include_directories(Blue PUBLIC ${BLUE_INCLUDE_DIRECTORY})
+
 target_include_directories(Exefile
-    PUBLIC
-        $<INSTALL_INTERFACE:include/eve/Exefile>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
         ${CMAKE_CURRENT_SOURCE_DIR}/..
