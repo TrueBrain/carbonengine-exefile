@@ -17,7 +17,9 @@ endif()
 file(TO_CMAKE_PATH "$ENV{CCP_EVE_PERFORCE_BRANCH_PATH}" BRANCH_ROOT_DIR)
 list(INSERT CMAKE_MODULE_PATH 0 ${BRANCH_ROOT_DIR}/cmake)
 
-list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_SOURCE_DIR}/cmake)
+include(CcpGlobalSettings)
+
+#list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_SOURCE_DIR}/cmake)
 
 
 #if(APPLE)
@@ -43,6 +45,9 @@ list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_SOURCE_DIR}/cmake)
 #    StdAfx.cpp
 #    StdAfx.h
 #    version.h)
+
+find_package(Crashpad REQUIRED NO_CMAKE_PATH)
+find_package(Blue REQUIRED NO_CMAKE_PATH)
 
 add_executable(Exefile
     autoversion.h
