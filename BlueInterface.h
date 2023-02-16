@@ -1,7 +1,7 @@
 #include <BlueExposure.h>
-#include "blue/Include/Blue.h"
-#include "blue/Include/IBlueOS.h"
-#include "blue/Include/IBluePaths.h"
+#include <../../Blue/include/Blue.h"
+#include <../../Blue/include/IBlueOS.h"
+#include <../../Blue/include/IBluePaths.h"
 
 
 class BlueInterface
