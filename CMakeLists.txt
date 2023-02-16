@@ -23,7 +23,21 @@ include(CcpGlobalSettings)
 find_package(Crashpad CONFIG REQUIRED NO_CMAKE_PATH)
 find_package(Blue CONFIG REQUIRED NO_CMAKE_PATH)
 
-get_directory_property(BLUE_INCLUDE_DIRECTORY INTERFACE_INCLUDE_DIRECTORIES include)
+#get_property(<variable>
+#             <GLOBAL             |
+#              DIRECTORY [<dir>]  |
+#              TARGET    <target> |
+#              SOURCE    <source>
+#                        [DIRECTORY <dir> | TARGET_DIRECTORY <target>] |
+#              INSTALL   <file>   |
+#              TEST      <test>   |
+#              CACHE     <entry>  |
+#              VARIABLE           >
+#             PROPERTY <name>
+#             [SET | DEFINED | BRIEF_DOCS | FULL_DOCS])
+get_property(BLUE_INCLUDE_DIRECTORY
+        INCLUDE_PATH_DIRECTORIES
+        PROPERTY include)
 
 add_executable(Exefile
     autoversion.h
@@ -70,7 +84,7 @@ target_compile_definitions(Exefile PRIVATE BLUEBUILD_STATIC CRASH_REPORTS_ENABLE
 
 target_link_libraries(Exefile PUBLIC BlueExposure Crashpad::Crashpad)
 
-target_include_directories(Blue PUBLIC ${BLUE_INCLUDE_DIRECTORY})
+target_include_directories(Blue PRIVATE ${BLUE_INCLUDE_DIRECTORY})
 
 target_include_directories(Exefile
     PRIVATE
