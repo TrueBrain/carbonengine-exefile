@@ -18,7 +18,6 @@ file(TO_CMAKE_PATH "$ENV{CCP_EVE_PERFORCE_BRANCH_PATH}" BRANCH_ROOT_DIR)
 list(INSERT CMAKE_MODULE_PATH 0 ${BRANCH_ROOT_DIR}/cmake)
 
 include(CcpGlobalSettings)
-include(CcpPackageConfigHelpers)
 
 find_package(Crashpad CONFIG REQUIRED NO_CMAKE_PATH)
 find_package(Blue CONFIG REQUIRED NO_CMAKE_PATH)
