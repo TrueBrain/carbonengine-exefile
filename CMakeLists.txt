@@ -28,7 +28,7 @@ get_target_property(BLUE_INCLUDE_DIRECTORY
         Blue
         INTERFACE_INCLUDE_DIRECTORIES)
 
-add_executable(Exefile
+ccp_add_executable(Exefile
     autoversion.h
     BlueInterface.cpp
     BlueInterface.h
@@ -88,11 +88,14 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
             TARGETS Exefile
             EXPORT ExefileTargets
             CONFIGURATIONS ${CMAKE_CONFIGURATION_TYPES}
+            LIBRARY DESTINATION lib/${CCP_PLATFORM}/${CCP_ARCHITECTURE}/${CCP_TOOLSET}/
             ARCHIVE DESTINATION lib/${CCP_PLATFORM}/${CCP_ARCHITECTURE}/${CCP_TOOLSET}/
             RUNTIME DESTINATION bin/${CCP_PLATFORM}/${CCP_ARCHITECTURE}/${CCP_TOOLSET}/
     )
     # Install rule for available public headers
     install(FILES ${PUBLIC_HEADER_FILES} DESTINATION include)
+
+    message(STATUS "lib/${CCP_PLATFORM}/${CCP_ARCHITECTURE}/${CCP_TOOLSET}/")
 
     configure_ccp_vendor_config_file(
             TARGET Exefile
