@@ -22,7 +22,6 @@ include(CcpGlobalSettings)
 find_package(Crashpad CONFIG REQUIRED NO_CMAKE_PATH)
 find_package(Blue CONFIG REQUIRED NO_CMAKE_PATH)
 
-
 get_target_property(BLUE_INCLUDE_DIRECTORY
         Blue
         INTERFACE_INCLUDE_DIRECTORIES)
@@ -80,7 +79,7 @@ target_include_directories(Exefile
 
 set_target_properties(Exefile PROPERTIES OUTPUT_NAME "exefile")
 
-# Provide an install target iff this is the top level project only
+# Provide an install target if this is the top level project only
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     # Install rule to ensure that our runtime and linker files are in the expected, platform-specific folders
     install(
