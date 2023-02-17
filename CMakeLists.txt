@@ -18,36 +18,38 @@ file(TO_CMAKE_PATH "$ENV{CCP_EVE_PERFORCE_BRANCH_PATH}" BRANCH_ROOT_DIR)
 list(INSERT CMAKE_MODULE_PATH 0 ${BRANCH_ROOT_DIR}/cmake)
 
 include(CcpGlobalSettings)
+include(CcpPackageConfigHelpers)
 
 find_package(Crashpad CONFIG REQUIRED NO_CMAKE_PATH)
 find_package(Blue CONFIG REQUIRED NO_CMAKE_PATH)
+
 
 get_target_property(BLUE_INCLUDE_DIRECTORY
         Blue
         INTERFACE_INCLUDE_DIRECTORIES)
 
 ccp_add_executable(Exefile
-    autoversion.h
-    BlueInterface.cpp
-    BlueInterface.h
-    CommandArguments.cpp
-    CommandArguments.h
-    Crashpad.cpp
-    Crashpad.h
-    ExeFile.cpp
-    ExeFile.h
-    ExeFileOsX.mm
-    ExeFileWin32.cpp
-    FileSystem.h
-    FileSystemOsX.mm
-    FileSystemWin32.cpp
-    resource.h
-    StdAfx.cpp
-    StdAfx.h
-    version.h
-    # Icon resource file on Windows, ignored on macOS
-    ExeFile.rc
-)
+        autoversion.h
+        BlueInterface.cpp
+        BlueInterface.h
+        CommandArguments.cpp
+        CommandArguments.h
+        Crashpad.cpp
+        Crashpad.h
+        ExeFile.cpp
+        ExeFile.h
+        ExeFileOsX.mm
+        ExeFileWin32.cpp
+        FileSystem.h
+        FileSystemOsX.mm
+        FileSystemWin32.cpp
+        resource.h
+        StdAfx.cpp
+        StdAfx.h
+        version.h
+        # Icon resource file on Windows, ignored on macOS
+        ExeFile.rc
+        )
 
 target_precompile_headers(Exefile PRIVATE StdAfx.h)
 
@@ -61,10 +63,10 @@ if(APPLE)
     enable_language(OBJCXX)
     target_link_libraries(Exefile PRIVATE "-framework Foundation")
     set_target_properties(
-        Exefile
-        PROPERTIES
-        BUILD_WITH_INSTALL_RPATH TRUE
-        INSTALL_RPATH "@executable_path/.")
+            Exefile
+            PROPERTIES
+            BUILD_WITH_INSTALL_RPATH TRUE
+            INSTALL_RPATH "@executable_path/.")
 endif()
 
 target_compile_definitions(Exefile PRIVATE BLUEBUILD_STATIC CRASH_REPORTS_ENABLED)
@@ -73,13 +75,13 @@ target_link_libraries(Exefile PUBLIC BlueExposure Crashpad::Crashpad)
 
 
 target_include_directories(Exefile
-    PRIVATE
+        PRIVATE
         ${BLUE_INCLUDE_DIRECTORY}
-)
+        )
 
 set_target_properties(Exefile PROPERTIES OUTPUT_NAME "exefile")
 
-# Provide an install target if this is the top level project only
+# Provide an install target iff this is the top level project only
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     # Install rule to ensure that our runtime and linker files are in the expected, platform-specific folders
     install(
