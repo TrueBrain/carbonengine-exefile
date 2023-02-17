@@ -23,44 +23,11 @@ include(CcpPackageConfigHelpers)
 find_package(Crashpad CONFIG REQUIRED NO_CMAKE_PATH)
 find_package(Blue CONFIG REQUIRED NO_CMAKE_PATH)
 
-set(SRC_FILES
-        autoversion.h
-        BlueInterface.cpp
-        CommandArguments.cpp
-        Crashpad.cpp
-        ExeFile.cpp
-        resource.h
-        StdAfx.cpp
-        version.h
-        )
-
-# Add Platform specific code
-if(WIN32)
-    list(APPEND SRC_FILES ExeFileWin32.cpp)
-    list(APPEND SRC_FILES FileSystemWin32.cpp)
-elseif(APPLE)
-    list(APPEND SRC_FILES ExeFileOsX.mm)
-    list(APPEND SRC_FILES FileSystemOsX.mm)
-else()
-    message(FATAL_ERROR "ExeFile does not support platform specified.")
-endif()
-
-set(PUBLIC_HEADER_FILES "")
-
-ccp_add_library(ExeFile SHARED ${SRC_FILES})
-
-get_target_property(_SOURCES ExeFile SOURCES)
-source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
-        PREFIX "Sources"
-        FILES ${_SOURCES}
-        )
-
-
 get_target_property(BLUE_INCLUDE_DIRECTORY
         Blue
         INTERFACE_INCLUDE_DIRECTORIES)
 
-add_executable(Exefile
+ccp_add_executable(Exefile
     autoversion.h
     BlueInterface.cpp
     BlueInterface.h
