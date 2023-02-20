@@ -80,6 +80,7 @@ target_include_directories(Exefile
         )
 
 set_target_properties(Exefile PROPERTIES OUTPUT_NAME "exefile")
+set_target_properties(Exefile PROPERTIES CMAKE_ARCHIVE_OUTPUT_DIRECTORY  "exefile")
 
 # Provide an install target iff this is the top level project only
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
@@ -88,19 +89,6 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
             TARGETS Exefile
             EXPORT ExefileTargets
             CONFIGURATIONS ${CMAKE_CONFIGURATION_TYPES}
-            LIBRARY DESTINATION lib/${CCP_PLATFORM}/${CCP_ARCHITECTURE}/${CCP_TOOLSET}/
-            ARCHIVE DESTINATION lib/${CCP_PLATFORM}/${CCP_ARCHITECTURE}/${CCP_TOOLSET}/
             RUNTIME DESTINATION bin/${CCP_PLATFORM}/${CCP_ARCHITECTURE}/${CCP_TOOLSET}/
     )
-    # Install rule for available public headers
-    install(FILES ${PUBLIC_HEADER_FILES} DESTINATION include)
-
-    message(STATUS "lib/${CCP_PLATFORM}/${CCP_ARCHITECTURE}/${CCP_TOOLSET}/")
-
-    configure_ccp_vendor_config_file(
-            TARGET Exefile
-            DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/ExefileConfig.cmake"
-            DEPENDENCIES ""
-    )
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ExefileConfig.cmake DESTINATION .)
 endif()
