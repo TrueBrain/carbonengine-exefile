@@ -1,5 +1,5 @@
 # Carbon ExeFile
-> Elements used to build the final exefile executable
+> Wrapper to run exefile processes from a command shell without spawning a new process
 
 ## Building
 
