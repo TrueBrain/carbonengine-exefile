@@ -35,6 +35,7 @@ bool BlueInterface::LoadBlue( const std::wstring& buildFlavor )
 	std::string str = std::string( std::begin( name ), std::end( name ) ) + ".so";
 	m_module = dlopen( str.c_str(), RTLD_LAZY );
 #elif _WIN32
+        name += L".pyd";
 	m_module = LoadLibraryW( name.c_str() );
 #else
 #error Unsupported platform
