@@ -35,7 +35,7 @@ bool BlueInterface::LoadBlue( const std::wstring& buildFlavor )
 	std::string str = std::string( std::begin( name ), std::end( name ) ) + ".so";
 	m_module = dlopen( str.c_str(), RTLD_LAZY );
 #elif _WIN32
-        name += L".pyd";
+	name += L".pyd";
 	m_module = LoadLibraryW( name.c_str() );
 #else
 #error Unsupported platform
@@ -47,9 +47,13 @@ bool BlueInterface::LoadBlue( const std::wstring& buildFlavor )
 	}
 
 #if __APPLE__
-#define LoadBlueRoutine( name ) if( !( m_blue##name##Routine = reinterpret_cast<Blue##name##Routine>( dlsym( m_module, CCP_STRINGIZE( Blue##name ) ) ) ) ) return false
+#define LoadBlueRoutine( name )                                                                                                \
+	if( !( m_blue##name##Routine = reinterpret_cast<Blue##name##Routine>( dlsym( m_module, CCP_STRINGIZE( Blue##name ) ) ) ) ) \
+	return false
 #elif _WIN32
-#define LoadBlueRoutine( name ) if( !( m_blue##name##Routine = reinterpret_cast<Blue##name##Routine>( GetProcAddress( static_cast<HMODULE>( m_module ), CCP_STRINGIZE( Blue##name ) ) ) ) ) return false
+#define LoadBlueRoutine( name )                                                                                                                                 \
+	if( !( m_blue##name##Routine = reinterpret_cast<Blue##name##Routine>( GetProcAddress( static_cast<HMODULE>( m_module ), CCP_STRINGIZE( Blue##name ) ) ) ) ) \
+	return false
 #else
 #error Unsupported platform
 #endif
@@ -61,6 +65,7 @@ bool BlueInterface::LoadBlue( const std::wstring& buildFlavor )
 	LoadBlueRoutine( InitializeSocketLogger );
 	LoadBlueRoutine( InitializeResourceLoading );
 	LoadBlueRoutine( InitializePaths );
+	LoadBlueRoutine( ShutdownSocketLogger );
 #undef LoadBlueRoutine
 
 	return true;
@@ -107,4 +112,9 @@ bool BlueInterface::InitializeResourceLoading() const
 bool BlueInterface::InitializePaths( const std::wstring& initialPath ) const
 {
 	return m_blueInitializePathsRoutine( initialPath );
+}
+
+void BlueInterface::ShutdownSocketLogger() const
+{
+	m_blueShutdownSocketLoggerRoutine();
 }

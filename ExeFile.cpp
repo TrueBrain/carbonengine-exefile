@@ -19,7 +19,6 @@ const char* g_moduleName = "ExeFile";
 
 #ifdef _WIN32
 #include <signal.h>
-#include <pythread.h>
 #include <windows.h>
 #endif
 
@@ -273,6 +272,7 @@ int Main(const CommandLine& commandLine)
 
 	blue.ModuleStartup();
 	blue.InitializeSocketLogger();
+	ON_BLOCK_EXIT( [&]{ blue.ShutdownSocketLogger(); } );
 
 	if( defaultedBlueFlavor )
 	{
