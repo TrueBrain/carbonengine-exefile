@@ -332,7 +332,6 @@ int Main(const CommandLine& commandLine)
 		return 6; // Search path argument error
 	}
 	blue.GetBluePaths()->LogPaths();
-	blue.InitializeResourceLoading();
 
 	if( commandArguments.affinity != -1 )
 	{

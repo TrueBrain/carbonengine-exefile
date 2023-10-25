@@ -17,7 +17,6 @@ public:
 	void LogFuncChannel( CcpLogChannel_t& logObject, CCP::LogType type, unsigned long userData, const char* format, ... ) const;
 	void ModuleStartup() const;
 	void InitializeSocketLogger() const;
-	bool InitializeResourceLoading() const;
 	bool InitializePaths( const std::wstring& initialPath ) const;
 	void ShutdownSocketLogger() const;
 
@@ -27,7 +26,6 @@ public:
 	using BlueLogFuncChannelRoutine = void( __cdecl* )( CcpLogChannel_t&, CCP::LogType, unsigned long, const char*, va_list );
 	using BlueModuleStartupRoutine = void( __cdecl* )();
 	using BlueInitializeSocketLoggerRoutine = void( __cdecl* )();
-	using BlueInitializeResourceLoadingRoutine = bool( __cdecl* )();
 	using BlueInitializePathsRoutine = bool( __cdecl* )( const std::wstring& );
 	using BlueShutdownSocketLoggerRoutine = void( __cdecl* )();
 
@@ -38,7 +36,6 @@ private:
 	BlueLogFuncChannelRoutine m_blueLogFuncChannelRoutine = nullptr;
 	BlueModuleStartupRoutine m_blueModuleStartupRoutine = nullptr;
 	BlueInitializeSocketLoggerRoutine m_blueInitializeSocketLoggerRoutine = nullptr;
-	BlueInitializeResourceLoadingRoutine m_blueInitializeResourceLoadingRoutine = nullptr;
 	BlueInitializePathsRoutine m_blueInitializePathsRoutine = nullptr;
 	BlueShutdownSocketLoggerRoutine m_blueShutdownSocketLoggerRoutine = nullptr;
 

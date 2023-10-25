@@ -63,7 +63,6 @@ bool BlueInterface::LoadBlue( const std::wstring& buildFlavor )
 	LoadBlueRoutine( LogFuncChannel );
 	LoadBlueRoutine( ModuleStartup );
 	LoadBlueRoutine( InitializeSocketLogger );
-	LoadBlueRoutine( InitializeResourceLoading );
 	LoadBlueRoutine( InitializePaths );
 	LoadBlueRoutine( ShutdownSocketLogger );
 #undef LoadBlueRoutine
@@ -102,11 +101,6 @@ void BlueInterface::ModuleStartup() const
 void BlueInterface::InitializeSocketLogger() const
 {
 	m_blueInitializeSocketLoggerRoutine();
-}
-
-bool BlueInterface::InitializeResourceLoading() const
-{
-	return m_blueInitializeResourceLoadingRoutine();
 }
 
 bool BlueInterface::InitializePaths( const std::wstring& initialPath ) const
