@@ -2,7 +2,7 @@
 #include <Blue.h>
 #include <IBlueOS.h>
 #include <IBluePaths.h>
-
+#include <errormessage.h>
 
 class BlueInterface
 {
@@ -19,6 +19,7 @@ public:
 	void InitializeSocketLogger() const;
 	bool InitializeResourceLoading() const;
 	bool InitializePaths( const std::wstring& initialPath ) const;
+	void ShowMessageBox( const BlueErrorMessage& windowTitle, const BlueErrorMessage& message ) const;
 
 	using BlueGetBeOSRoutine = IBlueOS*( __cdecl* )();
 	using BlueGetBluePathsRoutine = IBluePaths*(__cdecl*)();
@@ -28,6 +29,7 @@ public:
 	using BlueInitializeSocketLoggerRoutine = void( __cdecl* )();
 	using BlueInitializeResourceLoadingRoutine = bool( __cdecl* )();
 	using BlueInitializePathsRoutine = bool( __cdecl* )( const std::wstring& );
+	using BlueShowMessageBoxRoutine = void(__cdecl*)( const BlueErrorMessage&, const BlueErrorMessage& );
 
 private:
 	BlueGetBeOSRoutine m_blueGetBeOSRoutine = nullptr;
@@ -38,6 +40,7 @@ private:
 	BlueInitializeSocketLoggerRoutine m_blueInitializeSocketLoggerRoutine = nullptr;
 	BlueInitializeResourceLoadingRoutine m_blueInitializeResourceLoadingRoutine = nullptr;
 	BlueInitializePathsRoutine m_blueInitializePathsRoutine = nullptr;
+	BlueShowMessageBoxRoutine m_blueShowMessageBoxRoutine = nullptr;
 
 	void *m_module = nullptr;
 };
