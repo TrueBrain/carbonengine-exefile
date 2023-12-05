@@ -60,6 +60,7 @@ bool BlueInterface::LoadBlue( const std::wstring& buildFlavor )
 	LoadBlueRoutine( InitializeSocketLogger );
 	LoadBlueRoutine( InitializeResourceLoading );
 	LoadBlueRoutine( InitializePaths );
+	LoadBlueRoutine( ShowInvalidOSVersionError );
 #undef LoadBlueRoutine
 
 	return true;
@@ -106,4 +107,9 @@ bool BlueInterface::InitializeResourceLoading() const
 bool BlueInterface::InitializePaths( const std::wstring& initialPath ) const
 {
 	return m_blueInitializePathsRoutine( initialPath );
+}
+
+void BlueInterface::ShowInvalidOSVersionError() const
+{
+	m_blueShowInvalidOSVersionErrorRoutine();
 }

@@ -2,7 +2,6 @@
 #include "ExeFile.h"
 #include "Crashpad.h"
 #include "BlueInterface.h"
-
 #include <CCPLog.h>
 
 #include <errno.h>
@@ -21,6 +20,7 @@ const char* g_moduleName = "ExeFile";
 #include <signal.h>
 #include <pythread.h>
 #include <windows.h>
+#include <VersionHelpers.h>
 #endif
 
 void ShowBlueErr( const BlueInterface& blue )
@@ -220,6 +220,25 @@ DWORD WINAPI ServiceEntrypoint(LPVOID lpParam)
 
 #endif
 
+
+
+bool IsSupportedOSVersion()
+{
+#if _WIN32
+	if ( IsWindows10OrGreater() )
+	{
+		return true;
+	}
+#elif __APPLE__
+	return true;
+#else
+	#error Unsupported platform
+#endif
+
+	// Invalid OS
+	return false;
+}
+
 int Main(const CommandLine& commandLine)
 {
     DumpCommandLineToDebugger( commandLine );
@@ -259,6 +278,13 @@ int Main(const CommandLine& commandLine)
 		}
 
 		defaultedBlueFlavor = true;
+	}
+	
+	//Check for valid os and show localized platform specific error message dialog
+	if ( !IsSupportedOSVersion() )
+	{
+		blue.ShowInvalidOSVersionError();
+		return 0;
 	}
 
 #if !_DEBUG
