@@ -109,7 +109,7 @@ bool BlueInterface::InitializePaths( const std::wstring& initialPath ) const
 	return m_blueInitializePathsRoutine( initialPath );
 }
 
-void BlueInterface::ShowInvalidOSVersionError( ) const
+void BlueInterface::ShowInvalidOSVersionError() const
 {
-	m_blueShowInvalidOSVersionErrorRoutine( );
+	m_blueShowInvalidOSVersionErrorRoutine();
 }

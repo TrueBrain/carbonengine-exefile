@@ -223,10 +223,10 @@ DWORD WINAPI ServiceEntrypoint(LPVOID lpParam)
 
 
 
-bool OsIsValid()
+bool IsSupportedOSVersion()
 {
 #if _WIN32
-	if (IsWindows10OrGreater())
+	if ( IsWindows10OrGreater() )
 	{
 		return true;
 	}
@@ -282,9 +282,9 @@ int Main(const CommandLine& commandLine)
 	}
 	
 	//Check for valid os and show localized platform specific error message dialog
-	if (!OsIsValid())
+	if ( !IsSupportedOSVersion() )
 	{
-		blue.ShowInvalidOSVersionError( );
+		blue.ShowInvalidOSVersionError();
 		return 0;
 	}
 
