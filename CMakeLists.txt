@@ -51,6 +51,11 @@ ccp_add_executable(Exefile
         ExeFile.rc
         )
 
+if(WIN32)
+    # manifest file contains supported OS versions for windows
+    target_sources(Exefile PRIVATE .manifest)
+endif()
+
 target_precompile_headers(Exefile PRIVATE StdAfx.h)
 
 set_target_properties(Exefile PROPERTIES OUTPUT_NAME exefile)
