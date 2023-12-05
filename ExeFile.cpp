@@ -225,50 +225,19 @@ DWORD WINAPI ServiceEntrypoint(LPVOID lpParam)
 
 bool OsIsValid()
 {
-#ifdef _WIN32
+#if _WIN32
 	if (IsWindows10OrGreater())
 	{
 		return true;
 	}
 #elif __APPLE__
 	return true;
+#else
+	#error Unsupported platform
 #endif
 
 	// Invalid OS
 	return false;
-}
-
-// Platform specific localization OS validation error messages
-void getOSInvalidErrorMessage( BlueErrorMessage& title, BlueErrorMessage& message )
-{
-	title.de = "\xdc""berpr\xfc""fung fehlgeschlagen";
-	title.en = "Verification Failure";
-	title.es = "Fallo de verificaci\xf3n";
-	title.fr = "\xc9""chec de v\xe9rification";
-	title.ja = "\x94""F\x8f\xd8\x8e\xb8\x94s";
-	title.ko = "\xc0\xce\xc1\xf5 \xbd\xc7\xc6\xd0";
-	title.ru = "\x8e\xe8\xa8\xa1\xaa\xa0 \xaf\xae\xa4\xe2\xa2\xa5\xe0\xa6\xa4\xa5\xad\xa8\xef";
-	title.zh = "\xd1\xe9\xd6\xa4\xca\xa7\xb0\xdc";
-
-#ifdef _WIN32
-	message.de = "Windows\xa0""10 oder h\xf6her ben\xf6tigt";
-	message.en = "Windows 10 or higher required";
-	message.es = "Se requiere Windows 10 o superior";
-	message.fr = "Windows\xa0""10 ou sup\xe9rieur requis";
-	message.ja = "Windows 10\x88\xc8\x8d~\x82\xaa\x95K\x97v\x82\xc5\x82\xb7";
-	message.ko = "\xc0\xa9\xb5\xb5\xbf\xec 10 \xc0\xcc\xbb\xf3\xc0\xc7 \xbf\xee\xbf\xb5\xc3\xbc\xc1\xa6\xb0\xa1 \xbf\xe4\xb1\xb8\xb5\xcb\xb4\xcf\xb4\xd9";
-	message.ru = "\x92\xe0\xa5\xa1\xe3\xa5\xe2\xe1\xef Windows 10 \xa8\xab\xa8 \xa2\xeb\xe8\xa5";
-	message.zh = "\xd0\xe8\xd2\xaaWindows 10\xbb\xf2\xb8\xfc\xb8\xdf\xb0\xe6\xb1\xbe";
-#else
-	message.de = "Invalid OS";
-	message.en = "Invalid OS";
-	message.es = "Invalid OS";
-	message.fr = "Invalid OS";
-	message.ja = "Invalid OS";
-	message.ko = "Invalid OS";
-	message.ru = "Invalid OS";
-	message.zh = "Invalid OS";
-#endif
 }
 
 int Main(const CommandLine& commandLine)
@@ -313,12 +282,9 @@ int Main(const CommandLine& commandLine)
 	}
 	
 	//Check for valid os and show localized platform specific error message dialog
-	if ( !OsIsValid() )
+	if (!OsIsValid())
 	{
-		BlueErrorMessage title;
-		BlueErrorMessage message;
-		getOSInvalidErrorMessage( title, message );
-		blue.ShowMessageBox( title, message );
+		blue.ShowInvalidOSVersionError( );
 		return 0;
 	}
 
