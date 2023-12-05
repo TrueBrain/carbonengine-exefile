@@ -3,7 +3,6 @@
 #include "Crashpad.h"
 #include "BlueInterface.h"
 #include <CCPLog.h>
-#include <errormessage.h>
 
 #include <errno.h>
 #include <string>
