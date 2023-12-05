@@ -2,7 +2,6 @@
 #include <Blue.h>
 #include <IBlueOS.h>
 #include <IBluePaths.h>
-#include <errormessage.h>
 
 class BlueInterface
 {
