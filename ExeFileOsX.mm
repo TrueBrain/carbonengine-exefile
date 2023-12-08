@@ -43,10 +43,22 @@ void SetProcessAffinity( int affinity )
 {
 }
 
+bool IsSupportedOSVersion()
+{
+    if( @available( macOS 10.5, * ) )
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
 int main( int argc, char* argv[] )
 {
 	CommandLine commandLine = ParseCommandLine( argc, argv );
-	return Main( commandLine );
+	return Main( commandLine, IsSupportedOSVersion() );
 }
 
 #endif
