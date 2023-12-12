@@ -45,7 +45,7 @@ void SetProcessAffinity( int affinity )
 
 bool IsSupportedOSVersion()
 {
-    if( @available( macOS 10.5, * ) )
+    if( @available( macOS 10.15, * ) )
     {
         return true;
     }
