@@ -20,7 +20,6 @@ const char* g_moduleName = "ExeFile";
 #include <signal.h>
 #include <pythread.h>
 #include <windows.h>
-#include <VersionHelpers.h>
 #endif
 
 void ShowBlueErr( const BlueInterface& blue )
@@ -220,26 +219,7 @@ DWORD WINAPI ServiceEntrypoint(LPVOID lpParam)
 
 #endif
 
-
-
-bool IsSupportedOSVersion()
-{
-#if _WIN32
-	if ( IsWindows10OrGreater() )
-	{
-		return true;
-	}
-#elif __APPLE__
-	return true;
-#else
-	#error Unsupported platform
-#endif
-
-	// Invalid OS
-	return false;
-}
-
-int Main(const CommandLine& commandLine)
+int Main(const CommandLine& commandLine, bool isSupportedOS)
 {
     DumpCommandLineToDebugger( commandLine );
     CommandArguments commandArguments = GetCommandArguments( commandLine );
@@ -281,7 +261,7 @@ int Main(const CommandLine& commandLine)
 	}
 	
 	//Check for valid os and show localized platform specific error message dialog
-	if ( !IsSupportedOSVersion() )
+	if ( !isSupportedOS )
 	{
 		blue.ShowInvalidOSVersionError();
 		return 0;

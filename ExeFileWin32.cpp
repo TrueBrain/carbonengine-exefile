@@ -4,6 +4,7 @@
 #include <CcpCrash.h>
 #include <fcntl.h>
 #include <Shlobj.h>
+#include <VersionHelpers.h>
 
 namespace
 {
@@ -249,6 +250,10 @@ void SetProcessAffinity( int affinity )
 	}
 }
 
+bool IsSupportedOSVersion()
+{
+	return IsWindows10OrGreater();
+}
 
 int APIENTRY WinMain( HINSTANCE, HINSTANCE, LPSTR, int )
 {
@@ -260,7 +265,7 @@ int APIENTRY WinMain( HINSTANCE, HINSTANCE, LPSTR, int )
 	g_mainThreadId = GetCurrentThreadId();
 
 	CommandLine commandLine = ParseCommandLine();
-	int retcode = Main( commandLine );
+	int retcode = Main( commandLine, IsSupportedOSVersion() );
 
 
 	// If the game was launched from Media Center, find the window and restore
