@@ -65,6 +65,8 @@ bool BlueInterface::LoadBlue( const std::wstring& buildFlavor )
 	LoadBlueRoutine( InitializeSocketLogger );
 	LoadBlueRoutine( InitializePaths );
 	LoadBlueRoutine( ShutdownSocketLogger );
+	LoadBlueRoutine( InstallPythonMemoryHooks );
+	LoadBlueRoutine( LoadPythonExtension );
 #undef LoadBlueRoutine
 
 	return true;
@@ -111,4 +113,14 @@ bool BlueInterface::InitializePaths( const std::wstring& initialPath ) const
 void BlueInterface::ShutdownSocketLogger() const
 {
 	m_blueShutdownSocketLoggerRoutine();
+}
+
+void BlueInterface::InstallPythonMemoryHooks() const
+{
+	m_blueInstallPythonMemoryHooksRoutine();
+}
+
+PyObject* BlueInterface::LoadPythonExtension( const char* name ) const
+{
+	return m_blueLoadPythonExtensionRoutine(name);
 }

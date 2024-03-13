@@ -12,6 +12,7 @@
 #include <wchar.h>
 
 #include <fstream>
+#include <sstream>
 
 #include "CommandArguments.h"
 
@@ -21,6 +22,19 @@ const char* g_moduleName = "ExeFile";
 #include <signal.h>
 #include <windows.h>
 #endif
+
+enum ExitCodes : int
+{
+	SUCCESS = 0,
+	BLUE_INIT_ERROR = 3,
+	STACKLESS_INIT_ERROR = 4,
+	FAILED_LOADING_BLUE_RELEASE_FLAVOUR = 5,
+	SEARCH_PATH_ARGUMENT_ERROR = 6,
+	PYTHON_INIT_ERROR = 7,
+	PYTHON_ARGS_ALLOCATION_ERROR = 8,
+	PYTHON_BACKUP_ARGS_ALLOCATION_ERROR = 9,
+	PYTHON_ARG_ALLOCATION_ERROR = 10,
+};
 
 void ShowBlueErr( const BlueInterface& blue )
 {
@@ -219,6 +233,272 @@ DWORD WINAPI ServiceEntrypoint(LPVOID lpParam)
 
 #endif
 
+void BuildConcatenatedPathFromPathlist( const std::vector<std::wstring>& pathlist, std::wstring& path, bool interpreterMode )
+{
+#ifdef _WIN32
+	const wchar_t separator = L';';
+#else
+	const wchar_t separator = L':';
+#endif
+	path.clear();
+
+	// We need to obey the environment settings when running in interpreter mode.
+	// NB: this is only necessary because our Stackless fork overrides the way sys.path is bootstrapped,
+	// and as such we kind of need to re-implement a part of `calculate_path()` in stackless' getpathp.c.
+	if( interpreterMode )
+	{
+		// in case you're wondering about the maximum length of an environment variable on Windows:
+		// https://devblogs.microsoft.com/oldnewthing/20100203-00/?p=15083
+		// And for posix, see "Limits on size of arguments and environment here:
+		// https://man7.org/linux/man-pages/man2/execve.2.html
+		wchar_t pythonpath[4096] = { '\0' };
+		auto pythonpath_env = std::getenv( "PYTHONPATH" );
+		if( pythonpath_env )
+		{
+			mbstowcs( pythonpath, pythonpath_env, sizeof( pythonpath ) / sizeof( wchar_t ) );
+			path = pythonpath;
+			path += separator;
+		}
+	}
+
+	for( size_t i = 0; i < pathlist.size(); i++ )
+	{
+		std::wstring elem = pathlist[i];
+		while( elem[elem.size() - 1] == L'/' || elem[elem.size() - 1] == L'\\' )
+			elem.erase( elem.size() - 1 );
+		if( !elem.size() )
+			continue;
+		if( i )
+			path += separator;
+		path += elem;
+	}
+}
+
+bool ConfigurePython( BlueInterface& blue, bool interpreterMode )
+{
+	// We always disable the user site directory - even in interpreter mode.
+	// The reason for this is that any C extension in the user's site directory
+	// won't be compatible with us in any case. Additionally, we seem to have an
+	// issue treating the corresponding configuration flag correctly, so we cannot
+	// just add `-s` or set `PYTHONNOUSERSITE=1` in the pythonInterpreter scipts.
+	Py_NoUserSiteDirectory++;
+
+	// TODO this doesn't seem to work well when mixing Python C extensions
+	// that are built in debug vs. non-debug...
+	CCP_LOG( "Installing Python memory allocators" );
+	blue.InstallPythonMemoryHooks();
+
+	PyPreConfig preConfig;
+	PyConfig config;
+	PyStatus status;
+
+	CCP_LOG( "Pre-initializing Python" );
+	if( !interpreterMode )
+	{
+		PyPreConfig_InitIsolatedConfig( &preConfig );
+	}
+	else
+	{
+		PyPreConfig_InitPythonConfig( &preConfig );
+	}
+
+	status = Py_PreInitialize( &preConfig );
+	CCP_LOG( "Pre-init reported exit code %d and message %s", status.exitcode, status.err_msg );
+
+	CCP_LOG( "Initializing Python" );
+	if( !interpreterMode )
+	{
+		PyConfig_InitIsolatedConfig( &config );
+		config.write_bytecode = 0;
+		config.optimization_level = 2;
+		config.site_import = 0;
+	}
+	else
+	{
+		PyConfig_InitPythonConfig( &config );
+		// need to disable user site directory because it may contain C extensions compiled with a different compiler. Alternately: we could provide our own site directory, but what's the point?
+		config.user_site_directory = 0;
+	}
+	CCP_LOG( "Init reported exit code %d and message %s", status.exitcode, status.err_msg );
+
+	CCP_LOG( "Adding warn option " );
+	status = PyWideStringList_Append( &( config.warnoptions ), L"d" );
+	CCP_LOG( "Warn option reported exit code %d and message %s", status.exitcode, status.err_msg );
+	CCP_LOG( "Setting argv" );
+	status = PyConfig_SetArgv( &config, 0, nullptr );
+	CCP_LOG( "SetArgv reported exit code %d and message %s", status.exitcode, status.err_msg );
+
+	std::vector<std::wstring> pathlist;
+	static std::wstring path;
+
+	if( !blue.GetBeOS()->ConstructPathListFromManifest( pathlist, !interpreterMode ) )
+	{
+		CCP_LOGERR("InitSysIncludePaths() failed");
+		return false;
+	}
+	BuildConcatenatedPathFromPathlist( pathlist, path, interpreterMode );
+
+	std::wstringstream pathHelper( path );
+
+#if _WIN32
+	for( std::wstring tmp; std::getline( pathHelper, tmp, L';' ); )
+#elif __APPLE__
+	for( std::wstring tmp; std::getline( pathHelper, tmp, L':' ); )
+#else
+#error Unknown env var separator on this platform
+#endif
+	{
+		status = PyWideStringList_Append( &( config.module_search_paths ), tmp.c_str() );
+		CCP_LOG( "Appending %S to sys.path candidate list (error %d: %s)", tmp.c_str(), status.exitcode, status.err_msg );
+	}
+	config.module_search_paths_set = 1;
+
+	// We want to avoid cluttering the Perforce workspace with `__pycache__` folders. Therefore, write any compiled
+	// bytecode to our usual cache location instead.
+	auto cachePath = blue.GetBluePaths()->ResolvePathForWritingW( L"cache:/__pycache__" );
+	if (!cachePath.empty()) {
+		config.pycache_prefix = cachePath.data();
+		CCP_LOG("Configured __pycache__ location to be %ls", config.pycache_prefix);
+	}
+	else {
+		CCP_LOG("Not configuring __pycache__ because `cache:` prefix not registered");
+	}
+
+	// Initialize built-in Python modules
+	std::vector<_inittab> extendedInitTab;
+	blue.GetBeOS()->GetInitTab(extendedInitTab);
+
+	auto initTabPtr = extendedInitTab.data();
+
+	if( PyImport_ExtendInittab( initTabPtr ) == -1 )
+	{
+		CCP_LOGERR( "Failed extending inittab with CCP builtins" );
+		return false;
+	}
+
+	CCP_LOG( "Initializing Python" );
+	status = Py_InitializeFromConfig( &config );
+
+	if( !Py_IsInitialized() )
+	{
+		//PyFlushError("Failed initializing Python");
+		CCP_LOGERR( "Py_Initialize() failed with error %d: %s", status.exitcode, status.err_msg );
+		return false;
+	}
+
+	return true;
+}
+
+/*
+	This is so that we can have exefile behave as a standard python interpreter.
+*/
+int runPyMain( std::vector<std::wstring> &argv, BlueInterface& blue )
+{
+	if (auto crashReporter = GetCrashReporter(); crashReporter) {
+		// Signal to the crash reporting system that we're running in interpreter mode
+		crashReporter->SetCrashKeyValue("interpreterMode", "true");
+		// And this allows us to filter for these kinds of crashes in sentry.io
+		// using snake_csae to be consistent with the other search able keys on sentry.
+		crashReporter->SetCrashKeyValue("sentry", R"({"tags": {"interpreter_mode": "true"}})");
+	}
+
+	// We want vanilla python behaviour.
+	// Every argument after /py gets forwarded to Py_Main
+	unsigned int nPythonArgs;
+	unsigned int vanillaIndex = 0;
+	char** pythonArguments;
+	// PyMain actually fucks with the arguments
+	// so we need to backup the pointer to clean them up
+	char** backupPythonArguments;
+
+	// At what index is the vanilla marker
+	for( unsigned int i = 0; i < argv.size(); i++ )
+	{
+		const std::wstring &arg = argv[i];
+		if( arg == L"/py")
+		{
+			vanillaIndex = i;
+			break;
+		}
+	}
+
+	// Create the parameter list for the main python function
+	nPythonArgs = (unsigned int)argv.size() - vanillaIndex;
+
+	// Convert all the unicode strings to ascii
+	// We are going to be very careful about allocating memory and reporting
+	// anything that goes wrong.
+	pythonArguments = (char**)CCP_MALLOC("RunPyMain: Argument Array",  nPythonArgs*sizeof(char*) );
+	if( pythonArguments == NULL )
+	{
+		CCP_LOGERR( "runPyMain() -> Couldn't allocate memory for the python arguments" );
+		return PYTHON_ARGS_ALLOCATION_ERROR;
+	}
+
+	backupPythonArguments = (char**)CCP_MALLOC("RunPyMain: Argument Array",  nPythonArgs*sizeof(char*) );
+	if( backupPythonArguments == NULL )
+	{
+		CCP_LOGERR( "runPyMain() -> Couldn't allocate memory for the backup python arguments" );
+		return PYTHON_BACKUP_ARGS_ALLOCATION_ERROR;
+	}
+
+	unsigned int index = 0;
+	unsigned int counter = 0;
+	do
+	{
+		unsigned int slen = (unsigned int)argv[index].size() + 1; // Plus one for the null terminator
+		pythonArguments[counter] = (char*)CCP_MALLOC( "RunPyMain: Array Element",  slen*sizeof(char) );
+		if( pythonArguments[counter] == NULL )
+		{
+			CCP_LOGERR( "runPyMain() -> Couldn't allocate memory for one of the python parameters" );
+			return PYTHON_ARG_ALLOCATION_ERROR;
+		}
+		strncpy_s( pythonArguments[counter], slen, CW2A(argv[index].c_str()), _TRUNCATE );
+		++counter;
+		index = vanillaIndex + counter;
+	} while ( index < argv.size() );
+
+	// backup the pointers
+	for( unsigned int i = 0; i < nPythonArgs; i++ )
+	{
+		backupPythonArguments[i] = pythonArguments[i];
+	}
+
+	// Success,... now lets hope the arguments make sense
+	int result = Py_BytesMain( nPythonArgs, pythonArguments );
+
+	// Cleanup
+	for( unsigned int i = 0; i < nPythonArgs; i++ )
+	{
+		CCP_FREE( backupPythonArguments[i] );
+	}
+	CCP_FREE( pythonArguments );
+	CCP_FREE( backupPythonArguments );
+	return result;
+}
+void SetPythonStartupArgs( const std::vector<std::wstring>& args_in,  std::vector<std::wstring>& args_out)
+{
+	args_out = args_in;
+
+	for( size_t i = 1; i < args_out.size(); ++i )
+	{
+		std::wstring argName = args_out[i];
+		std::wstring argValue;
+
+		if( argName[0] == L'/' )
+		{
+			argName.erase( 0, 1 );
+		}
+
+		size_t assignPos = argName.find_first_of( L'=' );
+		if( assignPos != std::string::npos )
+		{
+			argValue = argName.substr( assignPos + 1 );
+			argName.erase( assignPos );
+		}
+	}
+}
+
 int Main(const CommandLine& commandLine)
 {
     DumpCommandLineToDebugger( commandLine );
@@ -254,21 +534,19 @@ int Main(const CommandLine& commandLine)
 		{
 			fprintf( stderr, "Failed to load release Blue flavor\n" );
 			fflush( stderr );
-			return 5;
+			return FAILED_LOADING_BLUE_RELEASE_FLAVOUR;
 		}
 
 		defaultedBlueFlavor = true;
 	}
 
-#if !_DEBUG
 	auto crashReporter = GetCrashReporter();
-	if( commandArguments.uploadMinidump )
+	if( crashReporter && commandArguments.uploadMinidump )
 	{
 		crashReporter->InitializeCrashpad();
 	}
 	// Tell Blue about our crash interface so that it can change settings
 	blue.SetCrashReporter( crashReporter );
-#endif
 
 	blue.ModuleStartup();
 	blue.InitializeSocketLogger();
@@ -291,7 +569,7 @@ int Main(const CommandLine& commandLine)
 		if (sdcHandle == NULL)
 		{
 			blue.LogFuncChannel( CCP::GetModuleChannel(), CCP::LOGTYPE_ERR, 0, "Failed to set up windows service ctrl." );
-			return 0;
+			return SUCCESS;
 		}
 	}
 #endif
@@ -329,7 +607,7 @@ int Main(const CommandLine& commandLine)
 	{
 		blue.LogFuncChannel( CCP::GetModuleChannel(), CCP::LOGTYPE_ERR, 0, "Error setting search paths. You might have a circular reference." );
 		ShowBlueErr( blue );
-		return 6; // Search path argument error
+		return SEARCH_PATH_ARGUMENT_ERROR; // Search path argument error
 	}
 	blue.GetBluePaths()->LogPaths();
 
@@ -338,18 +616,35 @@ int Main(const CommandLine& commandLine)
 		SetProcessAffinity( commandArguments.affinity );
 	}
 
-	if( !blue.GetBeOS()->Startup( commandArguments.pyOptimize, interpreterMode ? IGNORE_MANIFEST : VERIFY_MANIFEST ) )
+	if( !ConfigurePython( blue, interpreterMode ) )
 	{
 		ShowBlueErr( blue );
-		return 3; // Blue startup error code
+		return PYTHON_INIT_ERROR; // Python initialization error code
 	}
+
+	// Now enter python interpreter mode, if we are not packaged, and interpreter mode flag is set
+	if( !blue.GetBeOS()->IsPackaged() && interpreterMode )
+	{
+		std::vector<std::wstring> argv;
+		SetPythonStartupArgs(commandLine, argv);
+		int ret = runPyMain(argv, blue);
+		// exit with the interpreter's failure exit code
+		blue.GetBeOS()->Terminate(ret);
+	}
+
+	PyObject* blueMod = blue.LoadPythonExtension("blue");
+	if (blueMod == nullptr) {
+		ShowBlueErr( blue );
+		return BLUE_INIT_ERROR; // Blue initialization error code
+	}
+	Py_DECREF(blueMod);
 
 	// Now, enter stackless and continue running from there.  This allows stackless to initialize
 	// the main tasklet.
 	if( !blue.GetBeOS()->RunStackless() )
 	{
 		ShowBlueErr( blue );
-		return 4;
+		return STACKLESS_INIT_ERROR;
 	}
 
 #ifdef _WIN32
