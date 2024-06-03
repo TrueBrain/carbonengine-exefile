@@ -2,7 +2,6 @@
 #include "ExeFile.h"
 #include "Crashpad.h"
 #include "BlueInterface.h"
-
 #include <CCPLog.h>
 
 #include <errno.h>
@@ -219,7 +218,7 @@ DWORD WINAPI ServiceEntrypoint(LPVOID lpParam)
 
 #endif
 
-int Main(const CommandLine& commandLine)
+int Main(const CommandLine& commandLine, bool isSupportedOS)
 {
     DumpCommandLineToDebugger( commandLine );
     CommandArguments commandArguments = GetCommandArguments( commandLine );
@@ -258,6 +257,13 @@ int Main(const CommandLine& commandLine)
 		}
 
 		defaultedBlueFlavor = true;
+	}
+	
+	//Check for valid os and show localized platform specific error message dialog
+	if ( !isSupportedOS )
+	{
+		blue.ShowInvalidOSVersionError();
+		return 0;
 	}
 
 #if !_DEBUG

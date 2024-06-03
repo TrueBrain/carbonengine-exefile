@@ -4,7 +4,7 @@ void ShowConsoleWindow( ConsoleMode mode );
 void PreStartupTest();
 void SetProcessAffinity( int affinity );
 bool CreateDirectoryRec( const wchar_t *dir );
-int Main( const CommandLine& commandLine );
+int Main( const CommandLine& commandLine, bool isSupportedOS );
 
 #if _WIN32
 VOID WINAPI ServiceCtrlHandler(DWORD CtrlCode);

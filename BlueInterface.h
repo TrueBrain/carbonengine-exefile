@@ -3,7 +3,6 @@
 #include <IBlueOS.h>
 #include <IBluePaths.h>
 
-
 class BlueInterface
 {
 public:
@@ -19,6 +18,7 @@ public:
 	void InitializeSocketLogger() const;
 	bool InitializePaths( const std::wstring& initialPath ) const;
 	void ShutdownSocketLogger() const;
+	void ShowInvalidOSVersionError() const;
 
 	using BlueGetBeOSRoutine = IBlueOS*( __cdecl* )();
 	using BlueGetBluePathsRoutine = IBluePaths*(__cdecl*)();
@@ -28,6 +28,7 @@ public:
 	using BlueInitializeSocketLoggerRoutine = void( __cdecl* )();
 	using BlueInitializePathsRoutine = bool( __cdecl* )( const std::wstring& );
 	using BlueShutdownSocketLoggerRoutine = void( __cdecl* )();
+	using BlueShowInvalidOSVersionErrorRoutine = void( __cdecl* )();
 
 private:
 	BlueGetBeOSRoutine m_blueGetBeOSRoutine = nullptr;
@@ -38,6 +39,7 @@ private:
 	BlueInitializeSocketLoggerRoutine m_blueInitializeSocketLoggerRoutine = nullptr;
 	BlueInitializePathsRoutine m_blueInitializePathsRoutine = nullptr;
 	BlueShutdownSocketLoggerRoutine m_blueShutdownSocketLoggerRoutine = nullptr;
+	BlueShowInvalidOSVersionErrorRoutine m_blueShowInvalidOSVersionErrorRoutine = nullptr;
 
 	void *m_module = nullptr;
 };
