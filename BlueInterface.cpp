@@ -66,6 +66,8 @@ bool BlueInterface::LoadBlue( const std::wstring& buildFlavor )
 	LoadBlueRoutine( InitializePaths );
 	LoadBlueRoutine( ShowInvalidOSVersionError );
 	LoadBlueRoutine( ShutdownSocketLogger );
+	LoadBlueRoutine( InstallPythonMemoryHooks );
+	LoadBlueRoutine( LoadPythonExtension );
 #undef LoadBlueRoutine
 
 	return true;
@@ -118,4 +120,14 @@ void BlueInterface::ShowInvalidOSVersionError() const
 void BlueInterface::ShutdownSocketLogger() const
 {
 	m_blueShutdownSocketLoggerRoutine();
+}
+
+void BlueInterface::InstallPythonMemoryHooks() const
+{
+	m_blueInstallPythonMemoryHooksRoutine();
+}
+
+PyObject* BlueInterface::LoadPythonExtension( const char* name ) const
+{
+	return m_blueLoadPythonExtensionRoutine(name);
 }

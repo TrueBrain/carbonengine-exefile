@@ -164,8 +164,12 @@ void CrashpadCrashInterface::ProduceImmediateDump()
 
 CrashpadCrashInterface* GetCrashReporter()
 {
+#if !_DEBUG
 	static CrashpadCrashInterface s_crashpadCrashInterface;
 	return &s_crashpadCrashInterface;
+#else
+	return nullptr;
+#endif
 }
 
 #endif
