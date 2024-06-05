@@ -25,7 +25,6 @@ const char* g_moduleName = "ExeFile";
 enum ExitCodes : int
 {
 	SUCCESS = 0,
-	BLUE_INIT_ERROR = 3,
 	STACKLESS_INIT_ERROR = 4,
 	FAILED_LOADING_BLUE_RELEASE_FLAVOUR = 5,
 	SEARCH_PATH_ARGUMENT_ERROR = 6,
@@ -637,13 +636,6 @@ int Main(const CommandLine& commandLine, bool isSupportedOS)
 		// exit with the interpreter's failure exit code
 		blue.GetBeOS()->Terminate(ret);
 	}
-
-	PyObject* blueMod = blue.LoadPythonExtension("blue");
-	if (blueMod == nullptr) {
-		ShowBlueErr( blue );
-		return BLUE_INIT_ERROR; // Blue initialization error code
-	}
-	Py_DECREF(blueMod);
 
 	// Now, enter stackless and continue running from there.  This allows stackless to initialize
 	// the main tasklet.
