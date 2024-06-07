@@ -231,7 +231,7 @@ DWORD WINAPI ServiceEntrypoint(LPVOID lpParam)
 
 #endif
 
-void BuildConcatenatedPathFromPathlist( const std::vector<std::wstring>& pathlist, std::wstring& path, bool interpreterMode )
+bool BuildConcatenatedPathFromPathlist( const std::vector<std::wstring>& pathlist, std::wstring& path, bool interpreterMode )
 {
 #ifdef _WIN32
 	const wchar_t separator = L';';
@@ -250,10 +250,23 @@ void BuildConcatenatedPathFromPathlist( const std::vector<std::wstring>& pathlis
 		// And for posix, see "Limits on size of arguments and environment here:
 		// https://man7.org/linux/man-pages/man2/execve.2.html
 		wchar_t pythonpath[4096] = { '\0' };
+#if _MSC_VER
+		// MSVC complains that `std::getenv` isn't safe. However, here the usage is safe because this
+		// codepath is single threaded and we copy the pointed at value via the `mbstowcs_s` call below.
+#pragma warning(push)
+#pragma warning(disable: 4996)
+#endif
 		auto pythonpath_env = std::getenv( "PYTHONPATH" );
+#if _MSC_VER
+#pragma warning(pop)
+#endif
 		if( pythonpath_env )
 		{
-			mbstowcs( pythonpath, pythonpath_env, sizeof( pythonpath ) / sizeof( wchar_t ) );
+			size_t converted{0};
+			if ( mbstowcs_s( &converted, pythonpath, pythonpath_env, std::extent_v<decltype(pythonpath)> ) != 0 )
+			{
+				return false;
+			}
 			path = pythonpath;
 			path += separator;
 		}
@@ -270,6 +283,8 @@ void BuildConcatenatedPathFromPathlist( const std::vector<std::wstring>& pathlis
 			path += separator;
 		path += elem;
 	}
+
+	return true;
 }
 
 bool ConfigurePython( BlueInterface& blue, bool interpreterMode )
@@ -334,7 +349,11 @@ bool ConfigurePython( BlueInterface& blue, bool interpreterMode )
 		CCP_LOGERR("InitSysIncludePaths() failed");
 		return false;
 	}
-	BuildConcatenatedPathFromPathlist( pathlist, path, interpreterMode );
+	if ( ! BuildConcatenatedPathFromPathlist( pathlist, path, interpreterMode ) )
+	{
+		CCP_LOGERR( "Failed constructing path list" );
+		return false;
+	}
 
 	std::wstringstream pathHelper( path );
 
