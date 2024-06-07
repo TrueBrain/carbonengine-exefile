@@ -318,7 +318,7 @@ bool ConfigurePython( BlueInterface& blue, bool interpreterMode )
 	status = Py_PreInitialize( &preConfig );
 	CCP_LOG( "Pre-init reported exit code %d and message %s", status.exitcode, status.err_msg );
 
-	CCP_LOG( "Initializing Python" );
+	CCP_LOG( "Configuring Python" );
 	if( !interpreterMode )
 	{
 		PyConfig_InitIsolatedConfig( &config );
