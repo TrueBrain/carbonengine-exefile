@@ -289,13 +289,6 @@ bool BuildConcatenatedPathFromPathlist( const std::vector<std::wstring>& pathlis
 
 bool ConfigurePython( BlueInterface& blue, bool interpreterMode )
 {
-	// We always disable the user site directory - even in interpreter mode.
-	// The reason for this is that any C extension in the user's site directory
-	// won't be compatible with us in any case. Additionally, we seem to have an
-	// issue treating the corresponding configuration flag correctly, so we cannot
-	// just add `-s` or set `PYTHONNOUSERSITE=1` in the pythonInterpreter scipts.
-	Py_NoUserSiteDirectory++;
-
 	// TODO this doesn't seem to work well when mixing Python C extensions
 	// that are built in debug vs. non-debug...
 	CCP_LOG( "Installing Python memory allocators" );
@@ -329,7 +322,11 @@ bool ConfigurePython( BlueInterface& blue, bool interpreterMode )
 	else
 	{
 		PyConfig_InitPythonConfig( &config );
-		// need to disable user site directory because it may contain C extensions compiled with a different compiler. Alternately: we could provide our own site directory, but what's the point?
+		// We always disable the user site directory - even in interpreter mode.
+		// The reason for this is that any C extension in the user's site directory
+		// won't be compatible with us in any case. Additionally, we seem to have an
+		// issue treating the corresponding configuration flag correctly, so we cannot
+		// just add `-s` or set `PYTHONNOUSERSITE=1` in the pythonInterpreter scipts.
 		config.user_site_directory = 0;
 	}
 	CCP_LOG( "Init reported exit code %d and message %s", status.exitcode, status.err_msg );
