@@ -34,41 +34,6 @@ enum ExitCodes : int
 	PYTHON_ARG_ALLOCATION_ERROR = 10,
 };
 
-void ShowBlueErr( const BlueInterface& blue )
-{
-	if( blue.GetBeOS()->GetError( 0 ) )
-	{
-		char* err = NULL;
-		blue.GetBeOS()->FormatError( &err );
-		blue.GetBeOS()->SetError( BEFLUSH ); //output to logger
-		blue.GetBeOS()->SetError( BECLEAR ); //clear it
-	}
-}
-
-bool SetBlueSearchPaths( const BlueInterface& blue, const std::vector<std::wstring>& searchPaths )
-{
-	for( const std::wstring & s : searchPaths )
-	{
-		size_t pos = s.find_first_of( L'=');
-		if( pos == std::wstring::npos )
-		{
-			blue.LogFuncChannel( CCP::GetModuleChannel(), CCP::LOGTYPE_WARN, 0, "Invalid path specification: %S", s.c_str() );
-			continue;
-		}
-
-		std::wstring keyW = s.substr( 0, pos );
-		std::wstring valueW = s.substr( pos + 1 );
-
-		if( !BeIsSuccess( blue.GetBluePaths()->SetSearchPathW( CW2A( keyW.c_str() ), valueW.c_str() ) ) )
-		{
-			return false;
-		}
-	}
-
-	return true;
-}
-
-
 //Use this to redirect standard error to a file.
 //Note, that we don't like this much.  The user should use
 //ExeFile.com in conjunction with shell redirection to do this.
@@ -262,8 +227,7 @@ bool BuildConcatenatedPathFromPathlist( const std::vector<std::wstring>& pathlis
 #endif
 		if( pythonpath_env )
 		{
-			size_t converted{0};
-			if ( mbstowcs_s( &converted, pythonpath, pythonpath_env, std::extent_v<decltype(pythonpath)> ) != 0 )
+			if ( mbstowcs( pythonpath, pythonpath_env, std::extent_v<decltype(pythonpath)> - 1 ) == -1 )
 			{
 				return false;
 			}
@@ -341,7 +305,7 @@ bool ConfigurePython( BlueInterface& blue, bool interpreterMode )
 	std::vector<std::wstring> pathlist;
 	static std::wstring path;
 
-	if( !blue.GetBeOS()->ConstructPathListFromManifest( pathlist, !interpreterMode ) )
+	if( !blue.ConstructPathListFromManifest( pathlist, !interpreterMode ) )
 	{
 		CCP_LOGERR("InitSysIncludePaths() failed");
 		return false;
@@ -369,7 +333,7 @@ bool ConfigurePython( BlueInterface& blue, bool interpreterMode )
 
 	// We want to avoid cluttering the Perforce workspace with `__pycache__` folders. Therefore, write any compiled
 	// bytecode to our usual cache location instead.
-	auto cachePath = blue.GetBluePaths()->ResolvePathForWritingW( L"cache:/__pycache__" );
+	auto cachePath = blue.ResolvePathForWritingW( L"cache:/__pycache__" );
 	if (!cachePath.empty()) {
 		config.pycache_prefix = cachePath.data();
 		CCP_LOG("Configured __pycache__ location to be %ls", config.pycache_prefix);
@@ -380,7 +344,7 @@ bool ConfigurePython( BlueInterface& blue, bool interpreterMode )
 
 	// Initialize built-in Python modules
 	std::vector<_inittab> extendedInitTab;
-	blue.GetBeOS()->GetInitTab(extendedInitTab);
+	blue.GetInitTab(extendedInitTab);
 
 	auto initTabPtr = extendedInitTab.data();
 
@@ -608,9 +572,9 @@ int Main(const CommandLine& commandLine, bool isSupportedOS)
 
 	PreStartupTest();
 
-	blue.GetBeOS()->SetStartupArgs( commandLine );
+	blue.SetStartupArgs( commandLine );
 
-	bool interpreterMode = blue.GetBeOS()->HasStartupArg( L"py" );
+	bool interpreterMode = blue.HasStartupArg( L"py" );
 
 	std::wstring defaultPath = CcpGetCurrentWorkingDirectory();
 	if( interpreterMode )
@@ -624,13 +588,12 @@ int Main(const CommandLine& commandLine, bool isSupportedOS)
 		defaultPath = CcpGetAbsolutePath(CcpExecutablePath() + L"/../../..");
 	}
 	blue.InitializePaths( defaultPath );
-	if( !SetBlueSearchPaths( blue, commandArguments.searchPaths ) )
+	if( !blue.SetSearchPaths( commandArguments.searchPaths ) )
 	{
 		blue.LogFuncChannel( CCP::GetModuleChannel(), CCP::LOGTYPE_ERR, 0, "Error setting search paths. You might have a circular reference." );
-		ShowBlueErr( blue );
+		blue.ShowError();
 		return SEARCH_PATH_ARGUMENT_ERROR; // Search path argument error
 	}
-	blue.GetBluePaths()->LogPaths();
 
 	if( commandArguments.affinity != -1 )
 	{
@@ -639,25 +602,25 @@ int Main(const CommandLine& commandLine, bool isSupportedOS)
 
 	if( !ConfigurePython( blue, interpreterMode ) )
 	{
-		ShowBlueErr( blue );
+		blue.ShowError();
 		return PYTHON_INIT_ERROR; // Python initialization error code
 	}
 
 	// Now enter python interpreter mode, if we are not packaged, and interpreter mode flag is set
-	if( !blue.GetBeOS()->IsPackaged() && interpreterMode )
+	if( !blue.IsPackaged() && interpreterMode )
 	{
 		std::vector<std::wstring> argv;
 		SetPythonStartupArgs(commandLine, argv);
 		int ret = runPyMain(argv, blue);
 		// exit with the interpreter's failure exit code
-		blue.GetBeOS()->Terminate(ret);
+		blue.Terminate(ret);
 	}
 
 	// Now, enter stackless and continue running from there.  This allows stackless to initialize
 	// the main tasklet.
-	if( !blue.GetBeOS()->RunStackless() )
+	if( !blue.RunStackless() )
 	{
-		ShowBlueErr( blue );
+		blue.ShowError();
 		return STACKLESS_INIT_ERROR;
 	}
 
@@ -671,7 +634,7 @@ int Main(const CommandLine& commandLine, bool isSupportedOS)
 	// Normally the RunStackless function will terminate the app before even
 	// reaching here.  But just in case that doesn't happen we call Terminate,
 	// it's the only way to be sure :)
-	blue.GetBeOS()->Terminate();
+	blue.Terminate();
 
 	// Stop the compiler from complaining - we won't get here
 	return 0;
