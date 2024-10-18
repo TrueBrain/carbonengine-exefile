@@ -58,6 +58,7 @@ target_precompile_headers(Exefile PRIVATE StdAfx.h)
 set_target_properties(Exefile PROPERTIES OUTPUT_NAME exefile)
 
 if(WIN32)
+    target_link_libraries(Exefile PRIVATE Winmm)
     set_target_properties(Exefile PROPERTIES WIN32_EXECUTABLE True)
 endif()
 
