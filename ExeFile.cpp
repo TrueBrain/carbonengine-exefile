@@ -19,6 +19,7 @@ const char* g_moduleName = "ExeFile";
 
 #ifdef _WIN32
 #include <signal.h>
+#include <timeapi.h>
 #include <windows.h>
 #endif
 
@@ -557,6 +558,28 @@ int Main(const CommandLine& commandLine, bool isSupportedOS)
 			return SUCCESS;
 		}
 	}
+    
+    // Set desired timer resolution to 1 millisecond. By default,
+    // the granularity of timers is something like 15 milliseconds, which
+    // makes sleeps on Windows take a lot more time than one would expect.
+    // Microsoft documentation recommends doing this once at the application level
+    // since changing this frequently can mess with the system clock, scheduler and power usage.
+    // https://learn.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-sleep
+    TIMECAPS tc;
+    UINT TARGET_RESOLUTION_MS{1};
+    UINT resolutionMS{0};
+
+    MMRESULT timeCapsError = timeGetDevCaps( &tc, sizeof( TIMECAPS ) );
+    if( timeCapsError != TIMERR_NOERROR )
+    {
+        CCP_LOGERR( "Failed to set desired timer resolution (error: %u). Simulation will tick at a lower frequency", timeCapsError );
+    }
+    else
+    {
+        resolutionMS = std::min( std::max( tc.wPeriodMin, TARGET_RESOLUTION_MS ), tc.wPeriodMax );
+        timeBeginPeriod( resolutionMS );
+    }
+    ON_BLOCK_EXIT( [resolutionMS] { if ( resolutionMS > 0 ) { timeEndPeriod( resolutionMS ); } } );
 #endif
 
 	//Initialize console and redirect stdoutput
