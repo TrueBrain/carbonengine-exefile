@@ -569,9 +569,10 @@ int Main(const CommandLine& commandLine, bool isSupportedOS)
     UINT TARGET_RESOLUTION_MS{1};
     UINT resolutionMS{0};
 
-    if( timeGetDevCaps( &tc, sizeof( TIMECAPS ) ) != TIMERR_NOERROR )
+    MMRESULT timeCapsError = timeGetDevCaps( &tc, sizeof( TIMECAPS ) );
+    if( timeCapsError != TIMERR_NOERROR )
     {
-        CCP_LOGERR( "Failed to set desired timer resolution." );
+        CCP_LOGERR( "Failed to set desired timer resolution (error: %u). Simulation will tick at a lower frequency", timeCapsError );
     }
     else
     {
