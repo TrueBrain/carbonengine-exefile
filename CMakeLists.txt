@@ -21,12 +21,9 @@ include(CcpGlobalSettings)
 include(CcpPackageConfigHelpers)
 
 find_package(Crashpad CONFIG REQUIRED NO_CMAKE_PATH)
-find_package(Blue CONFIG REQUIRED NO_CMAKE_PATH)
-
-
-get_target_property(BLUE_INCLUDE_DIRECTORY
-        Blue
-        INTERFACE_INCLUDE_DIRECTORIES)
+find_package(CcpCore CONFIG REQUIRED NO_CMAKE_PATH)
+find_package(CcpLog CONFIG REQUIRED NO_CMAKE_PATH)
+find_package(Python CONFIG REQUIRED NO_CMAKE_PATH)
 
 ccp_add_executable(Exefile
         autoversion.h
@@ -61,6 +58,7 @@ target_precompile_headers(Exefile PRIVATE StdAfx.h)
 set_target_properties(Exefile PROPERTIES OUTPUT_NAME exefile)
 
 if(WIN32)
+    target_link_libraries(Exefile PRIVATE Winmm)
     set_target_properties(Exefile PROPERTIES WIN32_EXECUTABLE True)
 endif()
 
@@ -71,13 +69,15 @@ if(APPLE)
             Exefile
             PROPERTIES
             BUILD_WITH_INSTALL_RPATH TRUE
-            INSTALL_RPATH "@executable_path/.")
+            INSTALL_RPATH "@executable_path/."
+            # turn off IPO/LTO for macOS because it has issues with mixing opaque and non-opaque pointers
+            INTERPROCEDURAL_OPTIMIZATION OFF
+    )
 endif()
 
 target_compile_definitions(Exefile PRIVATE BLUEBUILD_STATIC CRASH_REPORTS_ENABLED)
 
-target_link_libraries(Exefile PUBLIC BlueExposure Crashpad::Crashpad)
-
+target_link_libraries(Exefile PUBLIC CcpCore ccp::log Crashpad::Crashpad Python)
 
 target_include_directories(Exefile
         PRIVATE

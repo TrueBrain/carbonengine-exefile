@@ -35,6 +35,7 @@ bool BlueInterface::LoadBlue( const std::wstring& buildFlavor )
 	std::string str = std::string( std::begin( name ), std::end( name ) ) + ".so";
 	m_module = dlopen( str.c_str(), RTLD_LAZY );
 #elif _WIN32
+	name += L".pyd";
 	m_module = LoadLibraryW( name.c_str() );
 #else
 #error Unsupported platform
@@ -46,34 +47,41 @@ bool BlueInterface::LoadBlue( const std::wstring& buildFlavor )
 	}
 
 #if __APPLE__
-#define LoadBlueRoutine( name ) if( !( m_blue##name##Routine = reinterpret_cast<Blue##name##Routine>( dlsym( m_module, CCP_STRINGIZE( Blue##name ) ) ) ) ) return false
+#define LoadBlueRoutine( name )                                                                                                \
+	if( !( m_blue##name##Routine = reinterpret_cast<Blue##name##Routine>( dlsym( m_module, CCP_STRINGIZE( Blue##name ) ) ) ) ) \
+	{                                                                                                                          \
+        fprintf(stderr, "Failed to resolve %s\n", CCP_STRINGIZE( Blue##name ) );                                               \
+		return false;                                                                                                          \
+	}
 #elif _WIN32
-#define LoadBlueRoutine( name ) if( !( m_blue##name##Routine = reinterpret_cast<Blue##name##Routine>( GetProcAddress( static_cast<HMODULE>( m_module ), CCP_STRINGIZE( Blue##name ) ) ) ) ) return false
+#define LoadBlueRoutine( name )                                                                                                                                 \
+	if( !( m_blue##name##Routine = reinterpret_cast<Blue##name##Routine>( GetProcAddress( static_cast<HMODULE>( m_module ), CCP_STRINGIZE( Blue##name ) ) ) ) ) \
+	return false
 #else
 #error Unsupported platform
 #endif
-	LoadBlueRoutine( GetBeOS );
-	LoadBlueRoutine( GetBluePaths );
 	LoadBlueRoutine( SetCrashReporter );
 	LoadBlueRoutine( LogFuncChannel );
 	LoadBlueRoutine( ModuleStartup );
 	LoadBlueRoutine( InitializeSocketLogger );
-	LoadBlueRoutine( InitializeResourceLoading );
 	LoadBlueRoutine( InitializePaths );
 	LoadBlueRoutine( ShowInvalidOSVersionError );
+	LoadBlueRoutine( ShutdownSocketLogger );
+	LoadBlueRoutine( InstallPythonMemoryHooks );
+	LoadBlueRoutine( LoadPythonExtension );
+	LoadBlueRoutine( ConstructPathListFromManifest );
+	LoadBlueRoutine( ResolvePathForWritingW );
+	LoadBlueRoutine( GetInitTab );
+	LoadBlueRoutine( SetStartupArgs );
+	LoadBlueRoutine( HasStartupArg );
+	LoadBlueRoutine( SetSearchPaths );
+	LoadBlueRoutine( IsPackaged );
+	LoadBlueRoutine( Terminate );
+	LoadBlueRoutine( RunStackless );
+	LoadBlueRoutine( ShowError );
 #undef LoadBlueRoutine
 
 	return true;
-}
-
-IBlueOS* BlueInterface::GetBeOS() const
-{
-	return m_blueGetBeOSRoutine();
-}
-
-IBluePaths* BlueInterface::GetBluePaths() const
-{
-	return m_blueGetBluePathsRoutine();
 }
 
 void BlueInterface::SetCrashReporter( ICrashReporter* crashReporter ) const
@@ -99,11 +107,6 @@ void BlueInterface::InitializeSocketLogger() const
 	m_blueInitializeSocketLoggerRoutine();
 }
 
-bool BlueInterface::InitializeResourceLoading() const
-{
-	return m_blueInitializeResourceLoadingRoutine();
-}
-
 bool BlueInterface::InitializePaths( const std::wstring& initialPath ) const
 {
 	return m_blueInitializePathsRoutine( initialPath );
@@ -112,4 +115,72 @@ bool BlueInterface::InitializePaths( const std::wstring& initialPath ) const
 void BlueInterface::ShowInvalidOSVersionError() const
 {
 	m_blueShowInvalidOSVersionErrorRoutine();
+}
+
+
+void BlueInterface::ShutdownSocketLogger() const
+{
+	m_blueShutdownSocketLoggerRoutine();
+}
+
+void BlueInterface::InstallPythonMemoryHooks() const
+{
+	m_blueInstallPythonMemoryHooksRoutine();
+}
+
+PyObject* BlueInterface::LoadPythonExtension( const char* name ) const
+{
+	return m_blueLoadPythonExtensionRoutine(name);
+}
+
+bool BlueInterface::ConstructPathListFromManifest( std::vector<std::wstring>& pathList, bool verifyManifest )
+{
+	return m_blueConstructPathListFromManifestRoutine( pathList, verifyManifest );
+}
+
+void BlueInterface::GetInitTab( std::vector<_inittab>& inittab )
+{
+	m_blueGetInitTabRoutine( inittab );
+}
+
+std::wstring BlueInterface::ResolvePathForWritingW( const std::wstring& path )
+{
+	std::wstring resolved;
+	m_blueResolvePathForWritingWRoutine( path, resolved );
+	return resolved;
+}
+
+bool BlueInterface::IsPackaged()
+{
+	return m_blueIsPackagedRoutine();
+}
+
+bool BlueInterface::RunStackless()
+{
+	return m_blueRunStacklessRoutine();
+}
+
+bool BlueInterface::HasStartupArg( const std::wstring& name )
+{
+	return m_blueHasStartupArgRoutine( name );
+}
+
+void BlueInterface::SetStartupArgs( const std::vector<std::wstring>& args )
+{
+	m_blueSetStartupArgsRoutine( args );
+}
+
+bool BlueInterface::SetSearchPaths( const std::vector<std::wstring>& searchPaths )
+{
+	return m_blueSetSearchPathsRoutine( searchPaths );
+}
+
+void BlueInterface::ShowError() const
+{
+	m_blueShowErrorRoutine();
+}
+
+void BlueInterface::Terminate( int exitCode )
+{
+	m_blueTerminateRoutine( exitCode );
 }

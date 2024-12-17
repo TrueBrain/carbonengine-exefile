@@ -27,9 +27,19 @@ using std::exception;
 #include <windows.h>
 #endif
 
-#include <BlueExposure.h>
-#include <Blue.h>
-#include <IBlueOS.h>
+// STL
+#include <map>
+#include <string>
+#include <vector>
+
+// carbon-core
+#include <CcpCore.h>
+
+// carbon-log
+#include <CCPLog.h>
+
+// Python
+#include <Python.h>
 
 #ifdef __APPLE__
 #ifdef toupper
@@ -54,4 +64,3 @@ using std::exception;
 #undef isupper
 #endif
 #endif
-

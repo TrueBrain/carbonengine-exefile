@@ -1,8 +1,3 @@
-#include <BlueExposure.h>
-#include <Blue.h>
-#include <IBlueOS.h>
-#include <IBluePaths.h>
-
 class BlueInterface
 {
 public:
@@ -10,36 +5,66 @@ public:
 
 	bool LoadBlue( const std::wstring& buildFlavor );
 
-	IBlueOS* GetBeOS() const;
-	IBluePaths* GetBluePaths() const;
 	void SetCrashReporter( ICrashReporter* crashReporter ) const;
 	void LogFuncChannel( CcpLogChannel_t& logObject, CCP::LogType type, unsigned long userData, const char* format, ... ) const;
 	void ModuleStartup() const;
 	void InitializeSocketLogger() const;
-	bool InitializeResourceLoading() const;
 	bool InitializePaths( const std::wstring& initialPath ) const;
+	void ShutdownSocketLogger() const;
+	void InstallPythonMemoryHooks() const;
+	PyObject* LoadPythonExtension( const char* name ) const;
 	void ShowInvalidOSVersionError() const;
+	void ShowError() const;
+	void Terminate( int exitCode = 0 );
+	bool RunStackless();
+	bool IsPackaged();
+	bool SetSearchPaths( const std::vector<std::wstring>& searchPaths );
+	void SetStartupArgs( const std::vector<std::wstring>& args );
+	bool HasStartupArg( const std::wstring& name );
+	void GetInitTab( std::vector<_inittab>& inittab );
+	bool ConstructPathListFromManifest( std::vector<std::wstring>& pathList, bool verifyManifest );
+	std::wstring ResolvePathForWritingW( const std::wstring& path );
 
-	using BlueGetBeOSRoutine = IBlueOS*( __cdecl* )();
-	using BlueGetBluePathsRoutine = IBluePaths*(__cdecl*)();
 	using BlueSetCrashReporterRoutine = void( __cdecl* )( ICrashReporter* );
 	using BlueLogFuncChannelRoutine = void( __cdecl* )( CcpLogChannel_t&, CCP::LogType, unsigned long, const char*, va_list );
 	using BlueModuleStartupRoutine = void( __cdecl* )();
 	using BlueInitializeSocketLoggerRoutine = void( __cdecl* )();
-	using BlueInitializeResourceLoadingRoutine = bool( __cdecl* )();
 	using BlueInitializePathsRoutine = bool( __cdecl* )( const std::wstring& );
+	using BlueShutdownSocketLoggerRoutine = void( __cdecl* )();
+	using BlueInstallPythonMemoryHooksRoutine = void(__cdecl* )();
+	using BlueLoadPythonExtensionRoutine = PyObject*(__cdecl*) ( const char* );
 	using BlueShowInvalidOSVersionErrorRoutine = void( __cdecl* )();
+	using BlueShowErrorRoutine = void( __cdecl* )();
+	using BlueTerminateRoutine = void( __cdecl* )( int );
+	using BlueRunStacklessRoutine = bool( __cdecl* )();
+	using BlueIsPackagedRoutine = bool( __cdecl* )();
+	using BlueSetSearchPathsRoutine = bool( __cdecl* )( const std::vector<std::wstring>& );
+	using BlueSetStartupArgsRoutine = void( __cdecl* )( const std::vector<std::wstring>& );
+	using BlueHasStartupArgRoutine = bool( __cdecl* )( const std::wstring& name );
+	using BlueGetInitTabRoutine = void( __cdecl* )( std::vector<struct _inittab>& );
+	using BlueResolvePathForWritingWRoutine = void( __cdecl* )( const std::wstring&, std::wstring& );
+	using BlueConstructPathListFromManifestRoutine = bool( __cdecl* )( std::vector<std::wstring>&, bool );
 
 private:
-	BlueGetBeOSRoutine m_blueGetBeOSRoutine = nullptr;
-	BlueGetBluePathsRoutine m_blueGetBluePathsRoutine = nullptr;
 	BlueSetCrashReporterRoutine m_blueSetCrashReporterRoutine = nullptr;
 	BlueLogFuncChannelRoutine m_blueLogFuncChannelRoutine = nullptr;
 	BlueModuleStartupRoutine m_blueModuleStartupRoutine = nullptr;
 	BlueInitializeSocketLoggerRoutine m_blueInitializeSocketLoggerRoutine = nullptr;
-	BlueInitializeResourceLoadingRoutine m_blueInitializeResourceLoadingRoutine = nullptr;
 	BlueInitializePathsRoutine m_blueInitializePathsRoutine = nullptr;
+	BlueShutdownSocketLoggerRoutine m_blueShutdownSocketLoggerRoutine = nullptr;
+	BlueInstallPythonMemoryHooksRoutine m_blueInstallPythonMemoryHooksRoutine = nullptr;
+	BlueLoadPythonExtensionRoutine m_blueLoadPythonExtensionRoutine = nullptr;
 	BlueShowInvalidOSVersionErrorRoutine m_blueShowInvalidOSVersionErrorRoutine = nullptr;
+	BlueShowErrorRoutine m_blueShowErrorRoutine = nullptr;
+	BlueTerminateRoutine m_blueTerminateRoutine = nullptr;
+	BlueRunStacklessRoutine m_blueRunStacklessRoutine = nullptr;
+	BlueIsPackagedRoutine m_blueIsPackagedRoutine = nullptr;
+	BlueSetSearchPathsRoutine m_blueSetSearchPathsRoutine = nullptr;
+	BlueSetStartupArgsRoutine m_blueSetStartupArgsRoutine = nullptr;
+	BlueHasStartupArgRoutine m_blueHasStartupArgRoutine = nullptr;
+	BlueGetInitTabRoutine m_blueGetInitTabRoutine = nullptr;
+	BlueResolvePathForWritingWRoutine m_blueResolvePathForWritingWRoutine = nullptr;
+	BlueConstructPathListFromManifestRoutine m_blueConstructPathListFromManifestRoutine = nullptr;
 
 	void *m_module = nullptr;
 };
