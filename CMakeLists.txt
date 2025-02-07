@@ -22,7 +22,6 @@ include(CcpPackageConfigHelpers)
 
 find_package(Crashpad CONFIG REQUIRED NO_CMAKE_PATH)
 find_package(CcpCore CONFIG REQUIRED NO_CMAKE_PATH)
-find_package(CcpLog CONFIG REQUIRED NO_CMAKE_PATH)
 find_package(Python CONFIG REQUIRED NO_CMAKE_PATH)
 
 ccp_add_executable(Exefile
@@ -77,7 +76,7 @@ endif()
 
 target_compile_definitions(Exefile PRIVATE BLUEBUILD_STATIC CRASH_REPORTS_ENABLED)
 
-target_link_libraries(Exefile PUBLIC CcpCore ccp::log Crashpad::Crashpad Python)
+target_link_libraries(Exefile PUBLIC CcpCore Crashpad::Crashpad Python)
 
 target_include_directories(Exefile
         PRIVATE
