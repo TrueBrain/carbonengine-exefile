@@ -17,12 +17,14 @@ endif()
 file(TO_CMAKE_PATH "$ENV{CCP_EVE_PERFORCE_BRANCH_PATH}" BRANCH_ROOT_DIR)
 list(INSERT CMAKE_MODULE_PATH 0 ${BRANCH_ROOT_DIR}/cmake)
 
-include(CcpGlobalSettings)
-include(CcpPackageConfigHelpers)
+include(CcpCmakePackageRoots) # This allows the build system to import crashpad
+include(cmake/CcpGlobalSettings.cmake)
+include(cmake/CcpBuildConfigurations.cmake)
+include(cmake/CcpTargetConfigurations.cmake)
 
 find_package(Crashpad CONFIG REQUIRED NO_CMAKE_PATH)
-find_package(CcpCore CONFIG REQUIRED NO_CMAKE_PATH)
-find_package(Python CONFIG REQUIRED NO_CMAKE_PATH)
+find_package(carbon-core CONFIG REQUIRED)
+find_package(Python3 COMPONENTS Development REQUIRED)
 
 ccp_add_executable(Exefile
         autoversion.h
@@ -76,7 +78,7 @@ endif()
 
 target_compile_definitions(Exefile PRIVATE BLUEBUILD_STATIC CRASH_REPORTS_ENABLED)
 
-target_link_libraries(Exefile PUBLIC CcpCore Crashpad::Crashpad Python)
+target_link_libraries(Exefile PUBLIC CcpCore Crashpad::Crashpad Python3::Python)
 
 target_include_directories(Exefile
         PRIVATE
@@ -88,11 +90,10 @@ set_target_properties(Exefile PROPERTIES CMAKE_ARCHIVE_OUTPUT_DIRECTORY  "exefil
 
 # Provide an install target iff this is the top level project only
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
-    # Install rule to ensure that our runtime and linker files are in the expected, platform-specific folders
     install(
             TARGETS Exefile
             EXPORT ExefileTargets
             CONFIGURATIONS ${CMAKE_CONFIGURATION_TYPES}
-            RUNTIME DESTINATION bin/${CCP_PLATFORM}/${CCP_ARCHITECTURE}/${CCP_TOOLSET}/
+            RUNTIME DESTINATION bin/
     )
 endif()
