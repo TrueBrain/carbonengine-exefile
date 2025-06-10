@@ -1,0 +1,12 @@
+{
+  "dependencies": [
+    {
+      "name": "carbon-core",
+      "version>=": "2.1.1#6"
+    },
+    {
+      "name": "python3-prebuilt",
+      "version>=": "3.12.3#3"
+    }
+  ]
+}
