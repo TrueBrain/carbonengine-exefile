@@ -10,13 +10,7 @@
     },
     {
       "name": "crashpad",
-      "version>=": "2020-03-18#2"
-    }
-  ],
-  "overrides": [
-    {
-      "name": "crashpad",
-      "version": "2020-03-18#2"
+      "version>=": "2021-04-14"
     }
   ]
 }
