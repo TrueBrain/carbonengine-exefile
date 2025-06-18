@@ -2,27 +2,11 @@ cmake_minimum_required(VERSION 3.16)
 
 project(Exefile VERSION 1.0.0)
 
-if(NOT DEFINED ENV{CCP_EVE_PERFORCE_BRANCH_PATH})
-    message(FATAL_ERROR "Missing required environment variable CCP_EVE_PERFORCE_BRANCH_PATH")
-elseif(NOT IS_ABSOLUTE $ENV{CCP_EVE_PERFORCE_BRANCH_PATH})
-    message(FATAL_ERROR "CCP_EVE_PERFORCE_BRANCH_PATH needs to be an absolute path")
-elseif(NOT EXISTS $ENV{CCP_EVE_PERFORCE_BRANCH_PATH})
-    message(FATAL_ERROR "CCP_EVE_PERFORCE_BRANCH_PATH is pointing at a non-existing location $ENV{CCP_EVE_PERFORCE_BRANCH_PATH}")
-elseif(NOT IS_DIRECTORY $ENV{CCP_EVE_PERFORCE_BRANCH_PATH})
-    message(FATAL_ERROR "CCP_EVE_PERFORCE_BRANCH_PATH needs to be a directory")
-else()
-    message(STATUS "Using CCP_EVE_PERFORCE_BRANCH_PATH located at $ENV{CCP_EVE_PERFORCE_BRANCH_PATH}")
-endif()
-
-file(TO_CMAKE_PATH "$ENV{CCP_EVE_PERFORCE_BRANCH_PATH}" BRANCH_ROOT_DIR)
-list(INSERT CMAKE_MODULE_PATH 0 ${BRANCH_ROOT_DIR}/cmake)
-
-include(CcpCmakePackageRoots) # This allows the build system to import crashpad
 include(cmake/CcpGlobalSettings.cmake)
 include(cmake/CcpBuildConfigurations.cmake)
 include(cmake/CcpTargetConfigurations.cmake)
 
-find_package(Crashpad CONFIG REQUIRED NO_CMAKE_PATH)
+find_package(crashpad CONFIG REQUIRED)
 find_package(carbon-core CONFIG REQUIRED)
 find_package(Python3 COMPONENTS Development REQUIRED)
 
@@ -78,7 +62,7 @@ endif()
 
 target_compile_definitions(Exefile PRIVATE BLUEBUILD_STATIC CRASH_REPORTS_ENABLED)
 
-target_link_libraries(Exefile PUBLIC CcpCore Crashpad::Crashpad Python3::Python)
+target_link_libraries(Exefile PUBLIC CcpCore crashpad::crashpad Python3::Python)
 
 target_include_directories(Exefile
         PRIVATE
