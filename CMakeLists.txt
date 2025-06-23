@@ -74,10 +74,22 @@ set_target_properties(Exefile PROPERTIES CMAKE_ARCHIVE_OUTPUT_DIRECTORY  "exefil
 
 # Provide an install target iff this is the top level project only
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
-    install(
-            TARGETS Exefile
-            EXPORT ExefileTargets
-            CONFIGURATIONS ${CMAKE_CONFIGURATION_TYPES}
-            RUNTIME DESTINATION bin/
-    )
+    set (INSTALL_MODE "PERFORCE" CACHE STRING "Install this package to a perforce branch vendor folder - provided for backwards compatability")
+
+    if (INSTALL_MODE STREQUAL "PERFORCE")
+        # Install rule to ensure that our runtime and linker files are in the expected, platform-specific folders
+        install(
+                TARGETS Exefile
+                EXPORT ExefileTargets
+                CONFIGURATIONS ${CMAKE_CONFIGURATION_TYPES}
+                RUNTIME DESTINATION bin/${CCP_PLATFORM}/${CCP_ARCHITECTURE}/${CCP_TOOLSET}/
+        )
+    else() # "VCPKG" INSTALL_MODE, but there's no need for another option, as this will be the default
+        install(
+                TARGETS Exefile
+                EXPORT ExefileTargets
+                CONFIGURATIONS ${CMAKE_CONFIGURATION_TYPES}
+                RUNTIME DESTINATION bin/
+        )
+    endif()
 endif()
