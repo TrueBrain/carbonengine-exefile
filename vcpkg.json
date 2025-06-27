@@ -2,7 +2,7 @@
   "dependencies": [
     {
       "name": "carbon-core",
-      "version>=": "2.1.1#6"
+      "version>=": "2.3.0#1"
     },
     {
       "name": "python3-prebuilt",
@@ -10,7 +10,7 @@
     },
     {
       "name": "crashpad",
-      "version>=": "2021-04-14#2"
+      "version>=": "2021-04-14#3"
     }
   ]
 }
