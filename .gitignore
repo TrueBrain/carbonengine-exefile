@@ -1,0 +1,5 @@
+CMakeUserPresets.json
+
+# Build output
+cmake-build-*/
+.cmake-build-*

@@ -2,27 +2,13 @@ cmake_minimum_required(VERSION 3.16)
 
 project(Exefile VERSION 1.0.0)
 
-if(NOT DEFINED ENV{CCP_EVE_PERFORCE_BRANCH_PATH})
-    message(FATAL_ERROR "Missing required environment variable CCP_EVE_PERFORCE_BRANCH_PATH")
-elseif(NOT IS_ABSOLUTE $ENV{CCP_EVE_PERFORCE_BRANCH_PATH})
-    message(FATAL_ERROR "CCP_EVE_PERFORCE_BRANCH_PATH needs to be an absolute path")
-elseif(NOT EXISTS $ENV{CCP_EVE_PERFORCE_BRANCH_PATH})
-    message(FATAL_ERROR "CCP_EVE_PERFORCE_BRANCH_PATH is pointing at a non-existing location $ENV{CCP_EVE_PERFORCE_BRANCH_PATH}")
-elseif(NOT IS_DIRECTORY $ENV{CCP_EVE_PERFORCE_BRANCH_PATH})
-    message(FATAL_ERROR "CCP_EVE_PERFORCE_BRANCH_PATH needs to be a directory")
-else()
-    message(STATUS "Using CCP_EVE_PERFORCE_BRANCH_PATH located at $ENV{CCP_EVE_PERFORCE_BRANCH_PATH}")
-endif()
+include(cmake/CcpGlobalSettings.cmake)
+include(cmake/CcpBuildConfigurations.cmake)
+include(cmake/CcpTargetConfigurations.cmake)
 
-file(TO_CMAKE_PATH "$ENV{CCP_EVE_PERFORCE_BRANCH_PATH}" BRANCH_ROOT_DIR)
-list(INSERT CMAKE_MODULE_PATH 0 ${BRANCH_ROOT_DIR}/cmake)
-
-include(CcpGlobalSettings)
-include(CcpPackageConfigHelpers)
-
-find_package(Crashpad CONFIG REQUIRED NO_CMAKE_PATH)
-find_package(CcpCore CONFIG REQUIRED NO_CMAKE_PATH)
-find_package(Python CONFIG REQUIRED NO_CMAKE_PATH)
+find_package(crashpad CONFIG REQUIRED)
+find_package(carbon-core CONFIG REQUIRED)
+find_package(Python3 COMPONENTS Development REQUIRED)
 
 ccp_add_executable(Exefile
         autoversion.h
@@ -76,7 +62,7 @@ endif()
 
 target_compile_definitions(Exefile PRIVATE BLUEBUILD_STATIC CRASH_REPORTS_ENABLED)
 
-target_link_libraries(Exefile PUBLIC CcpCore Crashpad::Crashpad Python)
+target_link_libraries(Exefile PUBLIC CcpCore crashpad::crashpad Python3::Python)
 
 target_include_directories(Exefile
         PRIVATE
@@ -88,11 +74,22 @@ set_target_properties(Exefile PROPERTIES CMAKE_ARCHIVE_OUTPUT_DIRECTORY  "exefil
 
 # Provide an install target iff this is the top level project only
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
-    # Install rule to ensure that our runtime and linker files are in the expected, platform-specific folders
-    install(
-            TARGETS Exefile
-            EXPORT ExefileTargets
-            CONFIGURATIONS ${CMAKE_CONFIGURATION_TYPES}
-            RUNTIME DESTINATION bin/${CCP_PLATFORM}/${CCP_ARCHITECTURE}/${CCP_TOOLSET}/
-    )
+    set (INSTALL_TO_MONOLITH ON CACHE BOOL "Install this package to a perforce branch vendor folder - provided for backwards compatability")
+
+    if (INSTALL_TO_MONOLITH)
+        # Install rule to ensure that our runtime and linker files are in the expected, platform-specific folders
+        install(
+                TARGETS Exefile
+                EXPORT ExefileTargets
+                CONFIGURATIONS ${CMAKE_CONFIGURATION_TYPES}
+                RUNTIME DESTINATION bin/${CCP_PLATFORM}/${CCP_ARCHITECTURE}/${CCP_TOOLSET}/
+        )
+    else() # "VCPKG" INSTALL_MODE, but there's no need for another option, as this will be the default
+        install(
+                TARGETS Exefile
+                EXPORT ExefileTargets
+                CONFIGURATIONS ${CMAKE_CONFIGURATION_TYPES}
+                RUNTIME DESTINATION bin/
+        )
+    endif()
 endif()
