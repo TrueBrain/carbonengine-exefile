@@ -46,6 +46,7 @@ class Publish(perforce_publish_path: String) : BuildType({
         text("reverse.dep.*.carbon_ref", "", label = "Ref  Carbon Component", description = "REF for carbon component e.g. refs/heads/main or refs/tags/v1.0.0 or refs/heads/frontier", display = ParameterDisplay.PROMPT, allowEmpty = true)
         param("eve_branch_path", "%reverse.dep.*.eve_branch_path%")
         param("eve_branch_root", "")
+        param("env.EXECUTABLE_FILENAMES_MATCH", "exefile,exefile_debug,exefile_internal,exefile_trinitydev")
     }
 
     vcs {
