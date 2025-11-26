@@ -5,8 +5,8 @@
       "version>=": "2.3.2"
     },
     {
-      "name": "python3-prebuilt",
-      "version>=": "3.12.3#3"
+      "name": "python3",
+      "version>=": "3.12.3#2"
     },
     {
       "name": "crashpad",
