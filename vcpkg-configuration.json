@@ -1,15 +1,15 @@
 {
   "default-registry": {
     "kind": "git",
-    "baseline": "bea476a80218a581bcb5318595849520217c825e",
+    "baseline": "242ac6932a9cd2607332969129e9572516f28d65",
     "repository": "https://github.com/microsoft/vcpkg.git"
   },
   "registries": [
     {
       "kind": "git",
-      "repository": "git@github.com:ccpgames/carbon-vcpkg-registry.git",
-      "baseline": "126293b3e25aafb7fa420b834a5a12e3cf5bcfc1",
-      "packages": ["carbon-*", "greenlet", "python3-prebuilt", "ccp-debug-info", "tracy", "crashpad", "openssl", "zlib"]
+      "repository": "git@github.com:carbonengine/vcpkg-registry.git",
+      "baseline": "303eacceb8ce9a0aa9a061f00ab2c11e8725ab2d",
+      "packages": ["python3", "carbon-core", "carbon-scheduler", "tracy", "greenlet", "ccp-debug-info", "crashpad", "zlib"]
     }
   ]
 }

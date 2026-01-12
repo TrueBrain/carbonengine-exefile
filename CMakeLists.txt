@@ -2,9 +2,10 @@ cmake_minimum_required(VERSION 3.16)
 
 project(Exefile VERSION 1.0.0)
 
-include(cmake/CcpGlobalSettings.cmake)
-include(cmake/CcpBuildConfigurations.cmake)
 include(cmake/CcpTargetConfigurations.cmake)
+include(cmake/CcpDocsGenerator.cmake)
+include(cmake/CcpPackageConfigHelpers.cmake)
+include(cmake/CcpBuildConfigurations.cmake)
 
 find_package(crashpad CONFIG REQUIRED)
 find_package(carbon-core CONFIG REQUIRED)
@@ -79,12 +80,17 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     if (INSTALL_TO_MONOLITH)
         # Install rule to ensure that our runtime and linker files are in the expected, platform-specific folders
         install(
+                IMPORTED_RUNTIME_ARTIFACTS crashpad::handler
+                DESTINATION bin/${CCP_PLATFORM}/${CCP_ARCHITECTURE}/${CCP_TOOLSET}/
+        )
+        install(
                 TARGETS Exefile
                 EXPORT ExefileTargets
                 CONFIGURATIONS ${CMAKE_CONFIGURATION_TYPES}
                 RUNTIME DESTINATION bin/${CCP_PLATFORM}/${CCP_ARCHITECTURE}/${CCP_TOOLSET}/
         )
     else() # "VCPKG" INSTALL_MODE, but there's no need for another option, as this will be the default
+        install(IMPORTED_RUNTIME_ARTIFACTS crashpad::handler)
         install(
                 TARGETS Exefile
                 EXPORT ExefileTargets
