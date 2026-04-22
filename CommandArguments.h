@@ -1,3 +1,4 @@
+// Copyright © 2026 CCP ehf.
 #pragma once
 #ifndef CommandArguments_H
 #define CommandArguments_H

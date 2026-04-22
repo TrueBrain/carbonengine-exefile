@@ -1,3 +1,4 @@
+// Copyright © 2026 CCP ehf.
 #include "windows.h"
 
 #define EVEFILEDESC "CCP ExeFile\0"

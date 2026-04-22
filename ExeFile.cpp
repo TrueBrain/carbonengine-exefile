@@ -1,3 +1,4 @@
+// Copyright © 2026 CCP ehf.
 #include "StdAfx.h"
 #include "ExeFile.h"
 #include "Crashpad.h"
@@ -386,7 +387,7 @@ int runPyMain( std::vector<std::wstring> &argv, BlueInterface& blue )
 	unsigned int nPythonArgs;
 	unsigned int vanillaIndex = 0;
 	char** pythonArguments;
-	// PyMain actually fucks with the arguments
+	// PyMain actually messes with the arguments
 	// so we need to backup the pointer to clean them up
 	char** backupPythonArguments;
 

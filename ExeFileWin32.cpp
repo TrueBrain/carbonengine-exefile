@@ -1,3 +1,4 @@
+// Copyright © 2026 CCP ehf.
 #include "StdAfx.h"
 #ifdef _WIN32
 #include "ExeFile.h"

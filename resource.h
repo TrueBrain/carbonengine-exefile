@@ -1,3 +1,4 @@
+// Copyright © 2026 CCP ehf.
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
 // Used by ExeFile.rc

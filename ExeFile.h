@@ -1,3 +1,4 @@
+// Copyright © 2026 CCP ehf.
 #include "CommandArguments.h"
 
 void ShowConsoleWindow( ConsoleMode mode );
