@@ -259,4 +259,4 @@ class Publish(perforce_publish_path: String) : BuildType({
     }
 })
 
-val PublishToPerforce = Publish("vendor/github.com/ccpgames/carbon-exefile")
+val PublishToPerforce = Publish("vendor/github.com/carbonengine/exefile")
