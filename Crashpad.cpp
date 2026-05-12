@@ -1,4 +1,4 @@
-// Copyright © 2026 CCP ehf.
+// Copyright © 2020 CCP ehf.
 #include "StdAfx.h"
 
 #if !_DEBUG

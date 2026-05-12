@@ -1,4 +1,4 @@
-// Copyright © 2026 CCP ehf.
+// Copyright © 2021 CCP ehf.
 #include "StdAfx.h"
 #if _WIN32
 

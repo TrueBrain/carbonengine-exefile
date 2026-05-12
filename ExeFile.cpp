@@ -1,4 +1,4 @@
-// Copyright © 2026 CCP ehf.
+// Copyright © 2014 CCP ehf.
 #include "StdAfx.h"
 #include "ExeFile.h"
 #include "Crashpad.h"
